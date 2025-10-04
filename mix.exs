@@ -21,6 +21,14 @@ defmodule GitVeil.MixProject do
       dialyzer: [
         plt_add_apps: [:mix],
         plt_file: {:no_warn, "priv/plts/dialyzer.plt"}
+      ],
+      # Mix Release configuration
+      releases: [
+        git_veil: [
+          include_executables_for: [:unix],
+          applications: [runtime_tools: :permanent],
+          steps: [:assemble, &create_cli_wrapper/1, :tar]
+        ]
       ]
     ]
   end
@@ -28,9 +36,38 @@ defmodule GitVeil.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger],
+      extra_applications: [:logger, :crypto],
       mod: {GitVeil.Application, []}
     ]
+  end
+
+  # Custom release step to create CLI wrapper
+  defp create_cli_wrapper(release) do
+    bin_path = Path.join([release.path, "bin", "git-veil-cli"])
+
+    wrapper_script = """
+    #!/bin/sh
+    set -e
+
+    SELF=$(readlink "$0" || true)
+    if [ -z "$SELF" ]; then SELF="$0"; fi
+    RELEASE_ROOT="$(cd "$(dirname "$SELF")/.." && pwd -P)"
+    export RELEASE_ROOT
+
+    # Build arguments list for Elixir
+    ARGS=""
+    for arg in "$@"; do
+      ARGS="$ARGS,\\\"$arg\\\""
+    done
+    ARGS=$(echo "$ARGS" | sed 's/^,//')
+
+    exec "$RELEASE_ROOT/bin/git_veil" eval "GitVeil.CLI.main([$ARGS])"
+    """
+
+    File.write!(bin_path, wrapper_script)
+    File.chmod!(bin_path, 0o755)
+
+    release
   end
 
   # Run "mix help deps" to learn about dependencies.
