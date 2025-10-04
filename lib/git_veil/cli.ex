@@ -31,7 +31,7 @@ defmodule GitVeil.CLI do
   """
 
   alias GitVeil.Adapters.{FileLogger, InMemoryKeyStorage, OpenSSLCrypto}
-  alias GitVeil.Commands.Doctor
+  alias GitVeil.Commands.{Doctor, Init}
 
   @version Mix.Project.config()[:version] || "dev"
 
@@ -68,7 +68,7 @@ defmodule GitVeil.CLI do
   defp parse_args(["--version" | _]), do: {:version, []}
   defp parse_args(["-v" | _]), do: {:version, []}
 
-  defp parse_args(["init" | rest]), do: {:init, rest}
+  defp parse_args(["init" | rest]), do: {:init, parse_options(rest)}
   defp parse_args(["doctor" | rest]), do: {:doctor, parse_options(rest)}
 
   defp parse_args(["clean", file_path | rest]) when is_binary(file_path) do
@@ -88,6 +88,9 @@ defmodule GitVeil.CLI do
     |> Enum.reduce([], fn
       "--verbose", acc -> [{:verbose, true} | acc]
       "-v", acc -> [{:verbose, true} | acc]
+      "--force", acc -> [{:force, true} | acc]
+      "-f", acc -> [{:force, true} | acc]
+      "--skip-gitattributes", acc -> [{:skip_gitattributes, true} | acc]
       _, acc -> acc
     end)
   end
@@ -104,14 +107,11 @@ defmodule GitVeil.CLI do
     {:ok, "GitVeil version #{@version}"}
   end
 
-  defp execute({:init, _opts}) do
-    # TODO: Implement initialization
-    # Should:
-    # 1. Generate keypair
-    # 2. Save to .git/git_veil/master.key
-    # 3. Configure Git filters
-    # 4. Setup .gitattributes template
-    {:error, "init command not yet implemented - this will be added in the next iteration"}
+  defp execute({:init, opts}) do
+    case Init.run(opts) do
+      {:ok, message} -> {:ok, message}
+      {:error, reason} -> {:error, reason}
+    end
   end
 
   defp execute({:doctor, opts}) do
@@ -197,35 +197,42 @@ defmodule GitVeil.CLI do
         help                Show this help message
 
     OPTIONS:
-        --verbose, -v       Show verbose output
-        --help, -h          Show help
+        --verbose, -v              Show verbose output
+        --help, -h                 Show help
+        --force, -f                Force overwrite (for init command)
+        --skip-gitattributes       Skip .gitattributes template creation
 
-    GIT FILTER SETUP:
+    INIT COMMAND:
 
-    Add to .git/config:
+        git_veil init [--force] [--skip-gitattributes]
 
-        [filter "gitveil"]
-            clean = git_veil clean %f
-            smudge = git_veil smudge %f
-            required = true
+        Initializes GitVeil by:
+        • Generating Kyber1024 post-quantum keypair
+        • Saving to .git/git_veil/master.key (0600 permissions)
+        • Configuring Git clean/smudge filters
+        • Creating .gitattributes template (unless --skip-gitattributes)
 
-    Add to .gitattributes:
-
-        *.env filter=gitveil
-        secrets/** filter=gitveil
+        Use --force to overwrite an existing keypair.
 
     EXAMPLES:
 
-        # Initialize GitVeil
+        # Initialize GitVeil (recommended first step)
         git_veil init
+
+        # Initialize and skip .gitattributes template
+        git_veil init --skip-gitattributes
+
+        # Reinitialize with new keypair (destroys old key!)
+        git_veil init --force
+
+        # Configure which files to encrypt
+        echo "*.env filter=gitveil" >> .gitattributes
+        echo "secrets/** filter=gitveil" >> .gitattributes
 
         # Run health check
         git_veil doctor --verbose
 
-        # Manual encryption (rarely needed - Git handles this)
-        cat file.txt | git_veil clean file.txt > encrypted.bin
-
-    For more information, visit: https://github.com/yourusername/git_veil
+    For more information, visit: https://github.com/code-of-kai/git_veil
     """
   end
 end
