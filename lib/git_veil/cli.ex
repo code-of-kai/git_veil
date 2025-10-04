@@ -137,29 +137,23 @@ defmodule GitVeil.CLI do
   defp execute({:clean, opts}) do
     file_path = Keyword.fetch!(opts, :file_path)
 
-    # For now, use in-memory adapters
-    # In production, would use FileKeyStorage
-    GitVeil.Adapters.GitFilter.process(
-      :clean,
-      file_path,
-      key_storage: InMemoryKeyStorage,
-      logger: FileLogger
-    )
-
-    {:ok, ""}  # Git filter outputs to stdout directly
+    # Process clean filter: plaintext (stdin) → encrypted (stdout)
+    # GitFilter.process handles all I/O directly
+    case GitVeil.Adapters.GitFilter.process(:clean, file_path) do
+      {:ok, 0} -> {:ok, ""}
+      {:error, exit_code} -> {:error, exit_code}
+    end
   end
 
   defp execute({:smudge, opts}) do
     file_path = Keyword.fetch!(opts, :file_path)
 
-    GitVeil.Adapters.GitFilter.process(
-      :smudge,
-      file_path,
-      key_storage: InMemoryKeyStorage,
-      logger: FileLogger
-    )
-
-    {:ok, ""}  # Git filter outputs to stdout directly
+    # Process smudge filter: encrypted (stdin) → plaintext (stdout)
+    # GitFilter.process handles all I/O directly
+    case GitVeil.Adapters.GitFilter.process(:smudge, file_path) do
+      {:ok, 0} -> {:ok, ""}
+      {:error, exit_code} -> {:error, exit_code}
+    end
   end
 
   defp execute({:error, message}) do

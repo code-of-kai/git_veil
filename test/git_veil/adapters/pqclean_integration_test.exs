@@ -46,7 +46,7 @@ defmodule GitVeil.Adapters.PQCleanIntegrationTest do
       assert keypair1.classical_secret != keypair2.classical_secret
     end
 
-    test "derives deterministic 64-byte master key from REAL PQ keypair" do
+    test "derives deterministic 32-byte master key from REAL PQ keypair" do
       {:ok, keypair} = InMemoryKeyStorage.generate_keypair()
       :ok = InMemoryKeyStorage.save_keypair(keypair)
 
@@ -55,7 +55,8 @@ defmodule GitVeil.Adapters.PQCleanIntegrationTest do
 
       # Master key derivation must be deterministic
       assert master_key1 == master_key2
-      assert byte_size(master_key1) == 64
+      assert %GitVeil.Core.Types.EncryptionKey{} = master_key1
+      assert byte_size(master_key1.key) == 32
     end
 
     test "master key changes with different PQ keypairs" do
@@ -83,12 +84,13 @@ defmodule GitVeil.Adapters.PQCleanIntegrationTest do
 
       {:ok, master_key} = InMemoryKeyStorage.derive_master_key()
 
-      # Master key is SHA-512(classical_secret || pq_secret)
+      # Master key is first 32 bytes of SHA-512(classical_secret || pq_secret)
       # Verify it's derived from both components
-      expected = :crypto.hash(:sha512, keypair.classical_secret <> keypair.pq_secret)
+      expected_bytes = :crypto.hash(:sha512, keypair.classical_secret <> keypair.pq_secret)
+                       |> binary_part(0, 32)
 
-      assert master_key == expected
-      assert byte_size(master_key) == 64
+      assert master_key.key == expected_bytes
+      assert byte_size(master_key.key) == 32
     end
   end
 
