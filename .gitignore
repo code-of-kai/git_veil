@@ -1,0 +1,30 @@
+# Elixir build artifacts
+/_build/
+/deps/
+/*.ez
+
+# Elixir crash dumps
+erl_crash.dump
+
+# Test coverage
+/cover/
+
+# Dialyzer
+/priv/plts/
+
+# Editor files
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Environment files
+.env
+.env.*
+
+# Log files
+*.log
+
+# Temporary files
+tmp/
+temp/
