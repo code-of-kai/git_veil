@@ -9,7 +9,7 @@ defmodule GitVeil.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       # CLI escript configuration
-      escript: [main_module: GitVeil.CLI],
+      escript: [main_module: GitVeil.CLI, name: "git-veil"],
       # Test coverage
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
