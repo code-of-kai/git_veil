@@ -14,7 +14,7 @@ defmodule GitVeil.Adapters.InMemoryKeyStorage do
 
   use Agent
 
-  alias GitVeil.Core.Types.Keypair
+  alias GitVeil.Core.Types.{Keypair, EncryptionKey}
 
   @doc """
   Start the in-memory key storage agent.
@@ -67,8 +67,10 @@ defmodule GitVeil.Adapters.InMemoryKeyStorage do
     case load_keypair() do
       {:ok, keypair} ->
         # Deterministic derivation: SHA-512(classical_secret || pq_secret)
+        # Take first 32 bytes for 256-bit key
         combined = keypair.classical_secret <> keypair.pq_secret
-        master_key = :crypto.hash(:sha512, combined)
+        master_key_bytes = :crypto.hash(:sha512, combined) |> binary_part(0, 32)
+        master_key = EncryptionKey.new(master_key_bytes)
         {:ok, master_key}
 
       error ->
