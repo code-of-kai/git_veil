@@ -5,20 +5,21 @@ defmodule GitVeil.Core.KeyDerivationTest do
   alias GitVeil.Core.Types.EncryptionKey
 
   describe "HKDF-SHA3-512 key derivation" do
-    test "derives three independent 32-byte keys" do
+    test "derives three independent keys (variable lengths for different algorithms)" do
       master_key = EncryptionKey.new(:crypto.strong_rand_bytes(32))
       file_path = "/path/to/file.txt"
 
       {:ok, derived} = KeyDerivation.derive_keys(master_key, file_path)
 
-      # Verify all keys are 32 bytes
-      assert byte_size(derived.layer1_key) == 32
-      assert byte_size(derived.layer2_key) == 32
-      assert byte_size(derived.layer3_key) == 32
+      # Verify key sizes match algorithm requirements
+      assert byte_size(derived.layer1_key) == 32  # AES-256-GCM
+      assert byte_size(derived.layer2_key) == 16  # Ascon-128a
+      assert byte_size(derived.layer3_key) == 32  # ChaCha20-Poly1305
 
       # Verify keys are different (independence)
-      assert derived.layer1_key != derived.layer2_key
-      assert derived.layer2_key != derived.layer3_key
+      # Note: Different sizes mean they can't be equal anyway, but verify first 16 bytes differ
+      assert binary_part(derived.layer1_key, 0, 16) != derived.layer2_key
+      assert derived.layer2_key != binary_part(derived.layer3_key, 0, 16)
       assert derived.layer1_key != derived.layer3_key
     end
 

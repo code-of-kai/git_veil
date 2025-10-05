@@ -1,0 +1,8 @@
+# Rust build artifacts
+/target/
+Cargo.lock
+
+# Native libraries
+*.so
+*.dll
+*.dylib
