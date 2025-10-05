@@ -80,6 +80,51 @@ GitVeil provides military-grade, triple-layer encryption for Git repositories th
     └────────────────┘
 ```
 
+### Decryption Pipeline
+
+```
+    ┌────────────────┐
+    │  Git Storage   │
+    └────────┬───────┘
+             │
+             ▼
+┌──────────────────────────────────────┐
+│  Wire Format Deserialization         │
+│  [v:1][tag1:16][tag2:16][tag3:16][ct]│
+└────────────┬─────────────────────────┘
+             │
+             ▼
+┌────────────────────────────────────────┐
+│  Layer 3: ChaCha20-Poly1305 (OpenSSL)  │
+│  • Decrypt + verify tag3               │
+│  • Returns Layer 2 ciphertext          │
+│  • Looks like random noise             │
+└────────────┬───────────────────────────┘
+             │
+             ▼
+┌────────────────────────────────────────┐
+│  Layer 2: Ascon-128a (Rust NIF)        │
+│  • Decrypt + verify tag2               │
+│  • Returns Layer 1 ciphertext          │
+│  • Still looks like random noise       │
+└────────────┬───────────────────────────┘
+             │
+             ▼
+┌────────────────────────────────────────┐
+│  Layer 1: AES-256-GCM (OpenSSL)        │
+│  • Decrypt + verify tag1               │
+│  • Returns plaintext (ONLY NOW!)       │
+│  • First recognizable data             │
+└────────────┬───────────────────────────┘
+             │
+             ▼
+      ┌─────────────┐
+      │  Plaintext  │
+      └─────────────┘
+```
+
+**Key insight:** Each layer verifies its authentication tag before decrypting. If an attacker tampers with ANY layer, the entire decryption fails - you can't skip layers or modify intermediate ciphertext.
+
 ### Why Triple-Layer Encryption?
 
 #### Defense in Depth: All-or-Nothing Security
@@ -106,6 +151,8 @@ An attacker who successfully cracks Layer 3 (ChaCha20) after years of work gets.
 - **No distinguishable difference!**
 
 The **only** way to confirm success is breaking ALL THREE layers and seeing recognizable plaintext.
+
+**Think of it like a safe with three locks:** You don't hear a "click" when you crack one lock. You only know you succeeded when all three locks open and you see what's inside.
 
 #### Multiplicative Security Against Algorithmic Attacks
 
