@@ -3,7 +3,7 @@ defmodule GitVeil.Core.EncryptionEngineTest do
 
   alias GitVeil.Core.{EncryptionEngine, Types}
   alias GitVeil.Core.Types.EncryptionKey
-  alias GitVeil.Adapters.OpenSSLCrypto
+  alias GitVeil.Adapters.{OpenSSLCrypto, AsconCrypto}
 
   describe "full encryption pipeline" do
     setup do
@@ -22,9 +22,9 @@ defmodule GitVeil.Core.EncryptionEngineTest do
         EncryptionEngine.encrypt(
           plaintext,
           master_key,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
+          OpenSSLCrypto,  # Layer 1: AES-256-GCM
+          AsconCrypto,     # Layer 2: Ascon-128a
+          OpenSSLCrypto,  # Layer 3: ChaCha20-Poly1305
           file_path
         )
 
@@ -40,9 +40,9 @@ defmodule GitVeil.Core.EncryptionEngineTest do
         EncryptionEngine.decrypt(
           blob,
           master_key,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
+          OpenSSLCrypto,  # Layer 1: AES-256-GCM
+          AsconCrypto,     # Layer 2: Ascon-128a
+          OpenSSLCrypto,  # Layer 3: ChaCha20-Poly1305
           file_path
         )
 
@@ -57,9 +57,9 @@ defmodule GitVeil.Core.EncryptionEngineTest do
         EncryptionEngine.encrypt(
           plaintext,
           master_key,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
+          OpenSSLCrypto,  # Layer 1: AES-256-GCM
+          AsconCrypto,     # Layer 2: Ascon-128a
+          OpenSSLCrypto,  # Layer 3: ChaCha20-Poly1305
           file_path
         )
 
@@ -81,9 +81,9 @@ defmodule GitVeil.Core.EncryptionEngineTest do
         EncryptionEngine.decrypt(
           deserialized_blob,
           master_key,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
+          OpenSSLCrypto,  # Layer 1: AES-256-GCM
+          AsconCrypto,     # Layer 2: Ascon-128a
+          OpenSSLCrypto,  # Layer 3: ChaCha20-Poly1305
           file_path
         )
 
@@ -97,9 +97,9 @@ defmodule GitVeil.Core.EncryptionEngineTest do
         EncryptionEngine.encrypt(
           plaintext,
           master_key,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
+          OpenSSLCrypto,  # Layer 1: AES-256-GCM
+          AsconCrypto,     # Layer 2: Ascon-128a
+          OpenSSLCrypto,  # Layer 3: ChaCha20-Poly1305
           "/path/to/file1.txt"
         )
 
@@ -107,9 +107,9 @@ defmodule GitVeil.Core.EncryptionEngineTest do
         EncryptionEngine.encrypt(
           plaintext,
           master_key,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
+          OpenSSLCrypto,  # Layer 1: AES-256-GCM
+          AsconCrypto,     # Layer 2: Ascon-128a
+          OpenSSLCrypto,  # Layer 3: ChaCha20-Poly1305
           "/path/to/file2.txt"
         )
 
@@ -148,9 +148,9 @@ defmodule GitVeil.Core.EncryptionEngineTest do
         EncryptionEngine.encrypt(
           plaintext,
           master_key,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
+          OpenSSLCrypto,  # Layer 1: AES-256-GCM
+          AsconCrypto,     # Layer 2: Ascon-128a
+          OpenSSLCrypto,  # Layer 3: ChaCha20-Poly1305
           file_path
         )
 
@@ -158,9 +158,9 @@ defmodule GitVeil.Core.EncryptionEngineTest do
         EncryptionEngine.decrypt(
           blob,
           master_key,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
+          OpenSSLCrypto,  # Layer 1: AES-256-GCM
+          AsconCrypto,     # Layer 2: Ascon-128a
+          OpenSSLCrypto,  # Layer 3: ChaCha20-Poly1305
           file_path
         )
 
@@ -176,9 +176,9 @@ defmodule GitVeil.Core.EncryptionEngineTest do
         EncryptionEngine.encrypt(
           plaintext,
           master_key,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
+          OpenSSLCrypto,  # Layer 1: AES-256-GCM
+          AsconCrypto,     # Layer 2: Ascon-128a
+          OpenSSLCrypto,  # Layer 3: ChaCha20-Poly1305
           file_path
         )
 
@@ -186,9 +186,9 @@ defmodule GitVeil.Core.EncryptionEngineTest do
         EncryptionEngine.encrypt(
           plaintext,
           master_key,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
+          OpenSSLCrypto,  # Layer 1: AES-256-GCM
+          AsconCrypto,     # Layer 2: Ascon-128a
+          OpenSSLCrypto,  # Layer 3: ChaCha20-Poly1305
           file_path
         )
 

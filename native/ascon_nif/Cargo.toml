@@ -1,0 +1,18 @@
+[package]
+name = "ascon_nif"
+version = "0.1.0"
+edition = "2021"
+authors = ["code-of-kai <97996644+code-of-kai@users.noreply.github.com>"]
+
+[lib]
+name = "ascon_nif"
+crate-type = ["cdylib"]
+
+[dependencies]
+rustler = "0.34.0"
+ascon-aead = "0.4.0"
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = 3
