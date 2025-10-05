@@ -3,15 +3,15 @@ defmodule GitVeil.Core.TripleCipherTest do
 
   alias GitVeil.Core.{TripleCipher, Types}
   alias GitVeil.Core.Types.DerivedKeys
-  alias GitVeil.Adapters.OpenSSLCrypto
+  alias GitVeil.Adapters.{OpenSSLCrypto, AsconCrypto}
 
-  describe "triple-layer encryption with OpenSSL" do
+  describe "triple-layer quantum-resistant encryption" do
     setup do
-      # Generate three independent 32-byte keys
+      # Generate three independent keys (variable lengths for different algorithms)
       derived_keys = %DerivedKeys{
-        layer1_key: :crypto.strong_rand_bytes(32),
-        layer2_key: :crypto.strong_rand_bytes(32),
-        layer3_key: :crypto.strong_rand_bytes(32)
+        layer1_key: :crypto.strong_rand_bytes(32),  # AES-256-GCM
+        layer2_key: :crypto.strong_rand_bytes(16),  # Ascon-128a
+        layer3_key: :crypto.strong_rand_bytes(32)   # ChaCha20-Poly1305
       }
 
       {:ok, derived_keys: derived_keys}
@@ -21,14 +21,14 @@ defmodule GitVeil.Core.TripleCipherTest do
       plaintext = "Secret data that needs triple-layer encryption"
       file_path = "/path/to/secret.txt"
 
-      # Encrypt using OpenSSL for all three layers
+      # Encrypt using triple-layer: AES-256-GCM, Ascon-128a, ChaCha20-Poly1305
       {:ok, ciphertext, tag1, tag2, tag3} =
         TripleCipher.encrypt(
           plaintext,
           keys,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
+          OpenSSLCrypto,  # Layer 1: AES-256-GCM
+          AsconCrypto,     # Layer 2: Ascon-128a
+          OpenSSLCrypto,  # Layer 3: ChaCha20-Poly1305
           file_path
         )
 
@@ -41,15 +41,15 @@ defmodule GitVeil.Core.TripleCipherTest do
       assert byte_size(tag2) == 16
       assert byte_size(tag3) == 16
 
-      # Decrypt (layers in reverse order)
+      # Decrypt (layers in reverse order: ChaCha20 -> Ascon -> AES)
       {:ok, decrypted} =
         TripleCipher.decrypt(
           ciphertext,
           {tag1, tag2, tag3},
           keys,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
+          OpenSSLCrypto,  # Layer 1: AES-256-GCM
+          AsconCrypto,     # Layer 2: Ascon-128a
+          OpenSSLCrypto,  # Layer 3: ChaCha20-Poly1305
           file_path
         )
 
@@ -66,9 +66,9 @@ defmodule GitVeil.Core.TripleCipherTest do
         TripleCipher.encrypt(
           plaintext,
           keys,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
+          OpenSSLCrypto,  # Layer 1: AES-256-GCM
+          AsconCrypto,     # Layer 2: Ascon-128a
+          OpenSSLCrypto,  # Layer 3: ChaCha20-Poly1305
           file_path
         )
 
@@ -76,9 +76,9 @@ defmodule GitVeil.Core.TripleCipherTest do
         TripleCipher.encrypt(
           plaintext,
           keys,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
+          OpenSSLCrypto,  # Layer 1: AES-256-GCM
+          AsconCrypto,     # Layer 2: Ascon-128a
+          OpenSSLCrypto,  # Layer 3: ChaCha20-Poly1305
           file_path
         )
 
@@ -98,9 +98,9 @@ defmodule GitVeil.Core.TripleCipherTest do
         TripleCipher.encrypt(
           plaintext1,
           keys,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
+          OpenSSLCrypto,  # Layer 1: AES-256-GCM
+          AsconCrypto,     # Layer 2: Ascon-128a
+          OpenSSLCrypto,  # Layer 3: ChaCha20-Poly1305
           file_path
         )
 
@@ -108,9 +108,9 @@ defmodule GitVeil.Core.TripleCipherTest do
         TripleCipher.encrypt(
           plaintext2,
           keys,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
+          OpenSSLCrypto,  # Layer 1: AES-256-GCM
+          AsconCrypto,     # Layer 2: Ascon-128a
+          OpenSSLCrypto,  # Layer 3: ChaCha20-Poly1305
           file_path
         )
 
@@ -125,9 +125,9 @@ defmodule GitVeil.Core.TripleCipherTest do
         TripleCipher.encrypt(
           plaintext,
           keys,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
+          OpenSSLCrypto,  # Layer 1: AES-256-GCM
+          AsconCrypto,     # Layer 2: Ascon-128a
+          OpenSSLCrypto,  # Layer 3: ChaCha20-Poly1305
           file_path
         )
 
@@ -141,9 +141,9 @@ defmodule GitVeil.Core.TripleCipherTest do
           tampered_ciphertext,
           {tag1, tag2, tag3},
           keys,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
+          OpenSSLCrypto,  # Layer 1: AES-256-GCM
+          AsconCrypto,     # Layer 2: Ascon-128a
+          OpenSSLCrypto,  # Layer 3: ChaCha20-Poly1305
           file_path
         )
 
@@ -158,17 +158,17 @@ defmodule GitVeil.Core.TripleCipherTest do
         TripleCipher.encrypt(
           plaintext,
           keys,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
+          OpenSSLCrypto,  # Layer 1: AES-256-GCM
+          AsconCrypto,     # Layer 2: Ascon-128a
+          OpenSSLCrypto,  # Layer 3: ChaCha20-Poly1305
           file_path
         )
 
       # Try to decrypt with wrong keys
       wrong_keys = %DerivedKeys{
-        layer1_key: :crypto.strong_rand_bytes(32),
-        layer2_key: :crypto.strong_rand_bytes(32),
-        layer3_key: :crypto.strong_rand_bytes(32)
+        layer1_key: :crypto.strong_rand_bytes(32),  # Wrong AES key
+        layer2_key: :crypto.strong_rand_bytes(16),  # Wrong Ascon key
+        layer3_key: :crypto.strong_rand_bytes(32)   # Wrong ChaCha20 key
       }
 
       result =
@@ -176,9 +176,9 @@ defmodule GitVeil.Core.TripleCipherTest do
           ciphertext,
           {tag1, tag2, tag3},
           wrong_keys,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
+          OpenSSLCrypto,  # Layer 1: AES-256-GCM
+          AsconCrypto,     # Layer 2: Ascon-128a
+          OpenSSLCrypto,  # Layer 3: ChaCha20-Poly1305
           file_path
         )
 
@@ -194,9 +194,9 @@ defmodule GitVeil.Core.TripleCipherTest do
         TripleCipher.encrypt(
           plaintext,
           keys,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
+          OpenSSLCrypto,  # Layer 1: AES-256-GCM
+          AsconCrypto,     # Layer 2: Ascon-128a
+          OpenSSLCrypto,  # Layer 3: ChaCha20-Poly1305
           file_path
         )
 
@@ -205,9 +205,9 @@ defmodule GitVeil.Core.TripleCipherTest do
           ciphertext,
           {tag1, tag2, tag3},
           keys,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
-          OpenSSLCrypto,
+          OpenSSLCrypto,  # Layer 1: AES-256-GCM
+          AsconCrypto,     # Layer 2: Ascon-128a
+          OpenSSLCrypto,  # Layer 3: ChaCha20-Poly1305
           file_path
         )
 
