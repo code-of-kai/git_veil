@@ -130,18 +130,31 @@ defmodule GitVeil.Core.Types do
 
   defmodule DerivedKeys do
     @moduledoc """
-    Three independent 32-byte keys derived from master key.
+    Six independent keys derived from master key for 6-layer encryption.
 
-    Each layer of encryption uses its own derived key for isolation.
+    Each layer of encryption uses its own derived key for maximum isolation.
+
+    **Key sizes (v3.0):**
+    - layer1_key: 32 bytes (AES-256-GCM)
+    - layer2_key: 32 bytes (AEGIS-256)
+    - layer3_key: 32 bytes (Schwaemm256-256)
+    - layer4_key: 32 bytes (Deoxys-II-256)
+    - layer5_key: 16 bytes (Ascon-128a)
+    - layer6_key: 32 bytes (ChaCha20-Poly1305)
+
+    Total: 1,408 bits → 704 bits post-quantum security
     """
 
-    @enforce_keys [:layer1_key, :layer2_key, :layer3_key]
-    defstruct [:layer1_key, :layer2_key, :layer3_key]
+    @enforce_keys [:layer1_key, :layer2_key, :layer3_key, :layer4_key, :layer5_key, :layer6_key]
+    defstruct [:layer1_key, :layer2_key, :layer3_key, :layer4_key, :layer5_key, :layer6_key]
 
     @type t :: %__MODULE__{
       layer1_key: binary(),
       layer2_key: binary(),
-      layer3_key: binary()
+      layer3_key: binary(),
+      layer4_key: binary(),
+      layer5_key: binary(),
+      layer6_key: binary()
     }
   end
 
@@ -149,18 +162,33 @@ defmodule GitVeil.Core.Types do
     @moduledoc """
     Encrypted blob with version and authentication tags.
 
-    Wire format:
-    [version:1][tag1:16][tag2:16][tag3:16][ciphertext:variable]
+    **Wire format v3.0 (6-layer):**
+    ```
+    [version:1][tag1:16][tag2:32][tag3:32][tag4:16][tag5:16][tag6:16][ciphertext:variable]
+    ```
+
+    **Tag sizes:**
+    - tag1: 16 bytes (AES-256-GCM)
+    - tag2: 32 bytes (AEGIS-256)
+    - tag3: 32 bytes (Schwaemm256-256)
+    - tag4: 16 bytes (Deoxys-II-256)
+    - tag5: 16 bytes (Ascon-128a)
+    - tag6: 16 bytes (ChaCha20-Poly1305)
+
+    Total overhead: 1 + 16 + 32 + 32 + 16 + 16 + 16 = 129 bytes per file
     """
 
-    @enforce_keys [:version, :tag1, :tag2, :tag3, :ciphertext]
-    defstruct [:version, :tag1, :tag2, :tag3, :ciphertext]
+    @enforce_keys [:version, :tag1, :tag2, :tag3, :tag4, :tag5, :tag6, :ciphertext]
+    defstruct [:version, :tag1, :tag2, :tag3, :tag4, :tag5, :tag6, :ciphertext]
 
     @type t :: %__MODULE__{
       version: non_neg_integer(),
       tag1: binary(),
       tag2: binary(),
       tag3: binary(),
+      tag4: binary(),
+      tag5: binary(),
+      tag6: binary(),
       ciphertext: binary()
     }
   end

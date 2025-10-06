@@ -1,0 +1,17 @@
+[package]
+name = "schwaemm_nif"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "schwaemm_nif"
+crate-type = ["cdylib"]
+
+[dependencies]
+rustler = "0.34.0"
+# sparkle-aead = "0.1"  # TODO: This crate doesn't exist - need to implement or find alternative
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = 3
