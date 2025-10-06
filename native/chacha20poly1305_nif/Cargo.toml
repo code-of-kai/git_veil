@@ -1,0 +1,12 @@
+[package]
+name = "chacha20poly1305_nif"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "chacha20poly1305_nif"
+crate-type = ["cdylib"]
+
+[dependencies]
+rustler = "0.34.0"
+chacha20poly1305 = "0.10"  # RustCrypto implementation
