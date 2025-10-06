@@ -1,0 +1,21 @@
+[package]
+name = "deoxys_nif"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "deoxys_nif"
+crate-type = ["cdylib"]
+
+[dependencies]
+rustler = "0.34.0"
+deoxys = "0.1"
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = 3
+
+[[test]]
+name = "integration"
+path = "tests/integration_test.rs"

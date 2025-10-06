@@ -1,0 +1,21 @@
+[package]
+name = "aegis_nif"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "aegis_nif"
+crate-type = ["cdylib"]
+
+[dependencies]
+rustler = "0.34.0"
+aegis = "0.9"
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = 3
+
+[[test]]
+name = "integration"
+path = "tests/integration_test.rs"
