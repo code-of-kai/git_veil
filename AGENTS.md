@@ -255,6 +255,32 @@ gh api repos/owner/repo/commits/branch --jq '.commit.message'
 - Integration tests for crypto operations
 - Performance benchmarks for large files
 
+## Development Workflow
 
+### Build & Install
+
+**CRITICAL: The installed binary is a symlink to the DEV build**
+
+```bash
+/usr/local/bin/git-veil -> /Users/kaitaylor/Documents/Coding/git-veil/_build/dev/rel/git_veil/bin/git-veil
+```
+
+**To update the binary after code changes:**
+
+```bash
+cd /Users/kaitaylor/Documents/Coding/git-veil
+mix release --overwrite  # Builds DEV version (NOT prod)
+```
+
+**The symlink automatically uses the updated dev build. No copying needed.**
+
+**NEVER run `MIX_ENV=prod mix release` unless explicitly asked** - the installed binary points to `_build/dev/`, not `_build/prod/`.
+
+### Why Mix Release (not escript)
+
+- GitVeil uses **Mix releases**, not escripts
+- Native dependencies (pqclean_nif.so, Rust NIFs) require a release
+- Escripts cannot bundle .so files needed for quantum-resistant crypto
+- The release is configured with `include_erts: false` to use system Erlang
 
 
