@@ -48,8 +48,8 @@ defmodule GitVeil.MixProject do
       # Mix Release configuration
       releases: [
         git_veil: [
+          include_erts: false,
           include_executables_for: [:unix],
-          applications: [runtime_tools: :permanent],
           steps: [:assemble, &create_cli_wrapper/1]
         ]
       ]
