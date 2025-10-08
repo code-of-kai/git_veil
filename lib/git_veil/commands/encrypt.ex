@@ -7,6 +7,7 @@ defmodule GitVeil.Commands.Encrypt do
   """
 
   alias GitVeil.Helpers.UIPrompts
+  alias GitVeil.Workflows.EncryptedAdd
 
   @doc """
   Encrypt all files matching .gitattributes patterns.
@@ -196,7 +197,7 @@ defmodule GitVeil.Commands.Encrypt do
           {:ok, "No files to encrypt."}
         else
           IO.puts("🔒  Encrypting #{total} files...\n")
-          add_files_with_progress(all_files, total)
+          run_encrypted_add(all_files, total)
         end
 
       {{error, _}, _} ->
@@ -207,44 +208,73 @@ defmodule GitVeil.Commands.Encrypt do
     end
   end
 
-  defp add_files_with_progress(files, total) do
-    files
-    |> Enum.with_index(1)
-    |> Enum.reduce_while(:ok, fn {file, index}, _acc ->
-      # Show progress (overwrite same line)
-      progress_bar = build_progress_bar(index, total)
-      IO.write("\r   #{progress_bar} #{index}/#{total} files")
+  defp run_encrypted_add(files, total) do
+    options = [
+      progress_opts: [
+        label: "   Running git add (encrypting files)"
+      ]
+    ]
 
-      # Add the file (triggers clean filter for encryption)
-      case System.cmd("git", ["add", file], stderr_to_stdout: true) do
-        {_, 0} ->
-          {:cont, :ok}
-
-        {error, _} ->
-          IO.write("\n")
-          {:halt, {:error, "Failed to add #{file}: #{String.trim(error)}"}}
-      end
-    end)
-    |> case do
-      :ok ->
-        IO.write("\n\n")
+    case EncryptedAdd.add_files(files, options) do
+      {:ok, %{processed: ^total}} ->
+        IO.puts("")
         :ok
 
-      error ->
-        error
+      {:ok, %{processed: processed}} ->
+        {:error,
+         "Encryption completed partially: processed #{processed} of #{total} files before exiting."}
+
+      {:error, _reason, context} ->
+        {:error, format_encrypted_add_error(context)}
     end
   end
 
-  defp build_progress_bar(current, total) do
-    percentage = current / total
-    filled = round(percentage * 20)
-    empty = 20 - filled
+  defp format_encrypted_add_error(context) do
+    path =
+      context
+      |> Map.get(:failed_paths, [])
+      |> List.wrap()
+      |> List.first()
 
-    bar = String.duplicate("█", filled) <> String.duplicate("░", empty)
-    percent = :erlang.float_to_binary(percentage * 100, decimals: 0)
+    detail = extract_error_detail(context)
 
-    "#{bar} #{percent}%"
+    case path do
+      nil -> "git add failed: #{detail}"
+      path -> "Failed to add #{path}: #{detail}"
+    end
   end
+
+  defp extract_error_detail(%{message: message}) when is_binary(message) and message != "" do
+    String.trim(message)
+  end
+
+  defp extract_error_detail(%{stderr: stderr}) when is_binary(stderr) and stderr != "" do
+    String.trim(stderr)
+  end
+
+  defp extract_error_detail(%{stdout: stdout}) when is_binary(stdout) and stdout != "" do
+    String.trim(stdout)
+  end
+
+  defp extract_error_detail(%{exception: %_{} = exception}) do
+    Exception.message(exception)
+  rescue
+    _ -> inspect(exception)
+  end
+
+  defp extract_error_detail(%{exception: exception}) when not is_nil(exception) do
+    inspect(exception)
+  end
+
+  defp extract_error_detail(%{exit_status: status}) when is_integer(status) do
+    "git exited with status #{status}"
+  end
+
+  defp extract_error_detail(%{reason: reason}) when is_atom(reason) do
+    Atom.to_string(reason)
+  end
+
+  defp extract_error_detail(_), do: "unknown error"
 
   defp success_message(key_action) do
     key_info = case key_action do
