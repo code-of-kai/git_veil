@@ -155,22 +155,21 @@ defmodule GitVeil.Infrastructure.Git do
   @impl true
   @spec check_attr_batch(String.t(), [String.t()]) :: {:ok, [{String.t(), String.t()}]} | {:error, String.t()}
   def check_attr_batch(attr, files) when is_list(files) do
-    # Process files in chunks to avoid System.cmd stdin size limits
-    # With large repositories (100+ files), passing all files at once can exceed limits
-    # Use Task.async_stream for concurrent processing of chunks
+    # Process files in chunks to avoid System.cmd argument list limits
+    # FALLBACK APPROACH: Pass files as arguments instead of stdin
+    # This avoids System.cmd stdin limitations while still batching for performance
+    # 100 files per command instead of 1 = 100x fewer process spawns
     chunk_size = 100
 
-    results = files
+    files
     |> Enum.chunk_every(chunk_size)
-    |> Task.async_stream(fn chunk ->
-      # git check-attr can handle multiple files at once via --stdin
-      # Format: one filename per line
-      input = Enum.join(chunk, "\n")
-
-      case System.cmd("git", ["check-attr", "--stdin", attr], stdin: input, stderr_to_stdout: true) do
+    |> Enum.reduce_while({:ok, []}, fn chunk, {:ok, acc} ->
+      # Pass files as arguments instead of via stdin
+      # git check-attr <attr> <file1> <file2> ...
+      case System.cmd("git", ["check-attr", attr] ++ chunk, stderr_to_stdout: true) do
         {output, 0} ->
           # Parse output: each line is "filename: attr: value"
-          parsed = output
+          results = output
           |> String.split("\n", trim: true)
           |> Enum.map(fn line ->
             # Split on first two colons to handle filenames with colons
@@ -181,24 +180,12 @@ defmodule GitVeil.Infrastructure.Git do
           end)
           |> Enum.reject(&is_nil/1)
 
-          {:ok, parsed}
+          {:cont, {:ok, acc ++ results}}
 
         {error, _} ->
-          {:error, String.trim(error)}
+          {:halt, {:error, String.trim(error)}}
       end
-    end, timeout: :infinity, max_concurrency: System.schedulers_online())
-    |> Enum.reduce_while({:ok, []}, fn
-      {:ok, {:ok, chunk_results}}, {:ok, acc} ->
-        {:cont, {:ok, acc ++ chunk_results}}
-
-      {:ok, {:error, error}}, _acc ->
-        {:halt, {:error, error}}
-
-      {:exit, reason}, _acc ->
-        {:halt, {:error, "Task failed: #{inspect(reason)}"}}
     end)
-
-    results
   end
 
   @doc """
