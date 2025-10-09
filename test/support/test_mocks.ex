@@ -1,6 +1,6 @@
-defmodule GitVeil.TestMocks do
+defmodule GitFoil.TestMocks do
   @moduledoc """
-  Shared mock implementations for testing git-veil commands.
+  Shared mock implementations for testing git-foil commands.
 
   These mocks use the process dictionary for stateful mocking,
   allowing tests to configure behavior on a per-test basis.
@@ -8,9 +8,9 @@ defmodule GitVeil.TestMocks do
 
   defmodule MockGit do
     @moduledoc """
-    Mock Git repository - implements GitVeil.Ports.Repository
+    Mock Git repository - implements GitFoil.Ports.Repository
     """
-    @behaviour GitVeil.Ports.Repository
+    @behaviour GitFoil.Ports.Repository
 
     def configure(opts \\ []) do
       Process.put(:mock_git_config, opts)
@@ -81,7 +81,7 @@ defmodule GitVeil.TestMocks do
 
   defmodule MockTerminal do
     @moduledoc """
-    Mock Terminal - implements GitVeil.Ports.Terminal
+    Mock Terminal - implements GitFoil.Ports.Terminal
     """
 
     def configure(opts \\ []) do

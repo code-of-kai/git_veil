@@ -4,7 +4,7 @@ mod schwaemm_v2;
 
 use rustler::{Env, Binary, Error, OwnedBinary};
 
-rustler::init!("Elixir.GitVeil.Native.SchwaemmNif");
+rustler::init!("Elixir.GitFoil.Native.SchwaemmNif");
 
 /// Schwaemm256-256 Encryption
 ///

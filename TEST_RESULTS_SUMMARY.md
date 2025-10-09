@@ -17,7 +17,7 @@
 ### Non-Interactive Tests: ✅ 17/17 PASSING
 
 ```bash
-$ mix test test/git_veil/commands/non_interactive_decision_forks_test.exs
+$ mix test test/git_foil/commands/non_interactive_decision_forks_test.exs
 
 Finished in 21.9 seconds (0.00s async, 21.9s sync)
 17 tests, 0 failures
@@ -61,7 +61,7 @@ Finished in 21.9 seconds (0.00s async, 21.9s sync)
 ### Shared Test Infrastructure
 
 **`test/support/test_mocks.ex`:**
-- **MockGit** - Implements GitVeil.Ports.Repository
+- **MockGit** - Implements GitFoil.Ports.Repository
 - **MockTerminal** - Handles interactive prompt simulation
 
 ### Mock Pattern
@@ -138,16 +138,16 @@ Each test:
 
 ```bash
 # Run all decision fork tests (takes ~5-10 minutes)
-mix test test/git_veil/commands/*_decision_forks_test.exs
+mix test test/git_foil/commands/*_decision_forks_test.exs
 
 # Run specific test suite
-mix test test/git_veil/commands/non_interactive_decision_forks_test.exs
+mix test test/git_foil/commands/non_interactive_decision_forks_test.exs
 
 # Run with trace to see progress
-mix test test/git_veil/commands/init_decision_forks_test.exs --trace
+mix test test/git_foil/commands/init_decision_forks_test.exs --trace
 
 # Run specific test by line number
-mix test test/git_veil/commands/init_decision_forks_test.exs:42
+mix test test/git_foil/commands/init_decision_forks_test.exs:42
 ```
 
 ### Performance Notes
@@ -159,7 +159,7 @@ mix test test/git_veil/commands/init_decision_forks_test.exs:42
 
 Tests are not async (`async: false`) because they:
 - Create actual `.gitattributes` files
-- Modify `.git/git_veil/` directory
+- Modify `.git/git_foil/` directory
 - Execute real encryption/decryption operations
 
 ---

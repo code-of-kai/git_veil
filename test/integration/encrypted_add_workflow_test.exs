@@ -1,9 +1,9 @@
-defmodule GitVeil.Integration.EncryptedAddWorkflowTest do
+defmodule GitFoil.Integration.EncryptedAddWorkflowTest do
   use ExUnit.Case, async: false
 
-  alias GitVeil.Test.GitTestHelper
-  alias GitVeil.Workflows.EncryptedAdd
-  alias GitVeil.Workflows.EncryptedAdd.Progress.Noop
+  alias GitFoil.Test.GitTestHelper
+  alias GitFoil.Workflows.EncryptedAdd
+  alias GitFoil.Workflows.EncryptedAdd.Progress.Noop
 
   @moduletag :integration
 
@@ -13,7 +13,7 @@ defmodule GitVeil.Integration.EncryptedAddWorkflowTest do
     init_output =
       case GitTestHelper.run_init(repo_path) do
         {output, 0} -> output
-        other -> flunk("git-veil init failed: #{inspect(other)}")
+        other -> flunk("git-foil init failed: #{inspect(other)}")
       end
 
     on_exit(fn -> GitTestHelper.cleanup_test_repo(repo_path) end)

@@ -1,8 +1,8 @@
 #!/usr/bin/env elixir
 
-alias GitVeil.Core.{EncryptionEngine, KeyDerivation}
-alias GitVeil.Core.Types.EncryptionKey
-alias GitVeil.Adapters.{OpenSSLCrypto, AsconCrypto}
+alias GitFoil.Core.{EncryptionEngine, KeyDerivation}
+alias GitFoil.Core.Types.EncryptionKey
+alias GitFoil.Adapters.{OpenSSLCrypto, AsconCrypto}
 
 IO.puts("\n🔐 Encrypting Real File with Triple-Layer Encryption\n")
 IO.puts("=" |> String.duplicate(60))

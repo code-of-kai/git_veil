@@ -5,7 +5,7 @@
 
 ## Context
 
-GitVeil implements transparent Git repository encryption through a three-layer defense-in-depth strategy. The current implementation uses OpenSSL-based algorithms exclusively, which creates a single point of failure if vulnerabilities are discovered in either the algorithm or implementation.
+GitFoil implements transparent Git repository encryption through a three-layer defense-in-depth strategy. The current implementation uses OpenSSL-based algorithms exclusively, which creates a single point of failure if vulnerabilities are discovered in either the algorithm or implementation.
 
 ### Current Architecture (v1.0)
 ```
@@ -86,7 +86,7 @@ fn ascon_encrypt(key: Binary, nonce: Binary, plaintext: Binary, aad: Binary)
 
 #### 2. CryptoProvider Port Extension
 ```elixir
-# lib/git_veil/ports/crypto_provider.ex
+# lib/git_foil/ports/crypto_provider.ex
 @callback ascon_128a_encrypt(
   key :: binary(),      # 16 bytes
   nonce :: binary(),    # 16 bytes
@@ -105,14 +105,14 @@ fn ascon_encrypt(key: Binary, nonce: Binary, plaintext: Binary, aad: Binary)
 
 #### 3. AsconCrypto Adapter
 ```elixir
-# lib/git_veil/adapters/ascon_crypto.ex
-defmodule GitVeil.Adapters.AsconCrypto do
-  @behaviour GitVeil.Ports.CryptoProvider
+# lib/git_foil/adapters/ascon_crypto.ex
+defmodule GitFoil.Adapters.AsconCrypto do
+  @behaviour GitFoil.Ports.CryptoProvider
 
   @impl true
   def ascon_128a_encrypt(key, nonce, plaintext, aad)
       when byte_size(key) == 16 and byte_size(nonce) == 16 do
-    GitVeil.Native.AsconNif.encrypt(key, nonce, plaintext, aad)
+    GitFoil.Native.AsconNif.encrypt(key, nonce, plaintext, aad)
   end
 
   # Stubs for unused callbacks (adapters can be algorithm-specific)
@@ -126,7 +126,7 @@ end
 
 #### 4. Variable-Length Key Derivation
 ```elixir
-# lib/git_veil/core/key_derivation.ex
+# lib/git_foil/core/key_derivation.ex
 @spec derive_keys(EncryptionKey.t(), String.t()) ::
   {:ok, %DerivedKeys{
     layer1_key: binary(),  # 32 bytes (AES-256-GCM)
@@ -137,9 +137,9 @@ end
 def derive_keys(%EncryptionKey{key: master_key}, file_path) do
   salt = :crypto.hash(:sha3_512, file_path) |> binary_part(0, 32)
 
-  layer1_key = hkdf_sha3_512(master_key, salt, "GitVeil.Layer1.AES256", 32)
-  layer2_key = hkdf_sha3_512(master_key, salt, "GitVeil.Layer2.Ascon", 16)  # 16 bytes!
-  layer3_key = hkdf_sha3_512(master_key, salt, "GitVeil.Layer3.ChaCha", 32)
+  layer1_key = hkdf_sha3_512(master_key, salt, "GitFoil.Layer1.AES256", 32)
+  layer2_key = hkdf_sha3_512(master_key, salt, "GitFoil.Layer2.Ascon", 16)  # 16 bytes!
+  layer3_key = hkdf_sha3_512(master_key, salt, "GitFoil.Layer3.ChaCha", 32)
 
   {:ok, %DerivedKeys{...}}
 end
@@ -147,7 +147,7 @@ end
 
 #### 5. TripleCipher Update
 ```elixir
-# lib/git_veil/core/triple_cipher.ex
+# lib/git_foil/core/triple_cipher.ex
 def encrypt(plaintext, %DerivedKeys{layer1_key: k1, layer2_key: k2, layer3_key: k3},
             layer1_provider, layer2_provider, layer3_provider, file_path) do
   aad = file_path
@@ -176,9 +176,9 @@ end
 
 #### 6. GitFilter Integration
 ```elixir
-# lib/git_veil/adapters/git_filter.ex
+# lib/git_foil/adapters/git_filter.ex
 defp encrypt_content(plaintext, master_key, file_path) do
-  alias GitVeil.Adapters.{OpenSSLCrypto, AsconCrypto}
+  alias GitFoil.Adapters.{OpenSSLCrypto, AsconCrypto}
 
   EncryptionEngine.encrypt(
     plaintext,
@@ -277,7 +277,7 @@ Version byte = 1 (same as before, backward compatible with deserialization)
 2. **NIST Lightweight Cryptography**: https://csrc.nist.gov/projects/lightweight-cryptography
 3. **Post-Quantum Cryptography**: NIST SP 800-208
 4. **HKDF RFC 5869**: https://datatracker.ietf.org/doc/html/rfc5869
-5. **GitVeil ADR-002**: Hexagonal Architecture for Testability
+5. **GitFoil ADR-002**: Hexagonal Architecture for Testability
 6. **Rust ascon-aead crate**: https://crates.io/crates/ascon-aead
 7. **Cryptographic Sponge Functions**: https://keccak.team/sponge_duplex.html
 
