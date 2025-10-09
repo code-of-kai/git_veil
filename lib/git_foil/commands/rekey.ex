@@ -1,21 +1,25 @@
-defmodule GitFoil.Commands.ReEncrypt do
+defmodule GitFoil.Commands.Rekey do
   @moduledoc """
-  Re-encrypt all files in the repository.
+  Rekey the repository by generating new encryption keys or refreshing with existing keys.
 
-  This command forces Git to re-apply encryption filters to all files,
-  which is useful after changing patterns in .gitattributes.
+  This command allows you to:
+  1. Generate new keys and re-encrypt all files (revoke access for team members)
+  2. Re-apply encryption with existing keys (useful after changing .gitattributes patterns)
+
+  Both operations re-encrypt all tracked files by forcing Git to re-run the clean filter.
   """
 
   alias GitFoil.Helpers.UIPrompts
   alias GitFoil.Workflows.EncryptedAdd
 
   @doc """
-  Re-encrypt all files by removing them from the index and re-adding them.
+  Rekey the repository by removing files from the index and re-adding them.
 
-  This forces Git to re-run the clean filter on all tracked files.
+  This forces Git to re-run the clean filter on all tracked files with either
+  new or existing encryption keys (user's choice).
   """
   def run(opts \\ []) do
-    IO.puts("🔄  Re-encrypting repository files...")
+    IO.puts("🔑  Rekeying repository...")
     IO.puts("")
 
     force = Keyword.get(opts, :force, false)
@@ -60,7 +64,7 @@ defmodule GitFoil.Commands.ReEncrypt do
   end
 
   defp prompt_key_choice do
-    case UIPrompts.prompt_key_choice(purpose: "re-encrypt files") do
+    case UIPrompts.prompt_key_choice(purpose: "rekey repository") do
       {:use_existing} ->
         IO.puts("\n✅  Using existing encryption key\n")
         {:use_existing}
@@ -153,9 +157,9 @@ defmodule GitFoil.Commands.ReEncrypt do
         total = length(all_files)
 
         if total == 0 do
-          {:error, "No files to re-encrypt."}
+          {:error, "No files to rekey."}
         else
-          IO.puts("🔒  Re-encrypting #{total} files...\n")
+          IO.puts("🔒  Rekeying #{total} files...\n")
           run_encrypted_add(all_files, total)
         end
 
@@ -170,7 +174,7 @@ defmodule GitFoil.Commands.ReEncrypt do
   defp run_encrypted_add(files, total) do
     options = [
       progress_opts: [
-        label: "   Running git add (re-encrypting files)"
+        label: "   Running git add (rekeying files)"
       ]
     ]
 
@@ -181,7 +185,7 @@ defmodule GitFoil.Commands.ReEncrypt do
 
       {:ok, %{processed: processed}} ->
         {:error,
-         "Re-encryption completed partially: processed #{processed} of #{total} files before exiting."}
+         "Rekey completed partially: processed #{processed} of #{total} files before exiting."}
 
       {:error, _reason, context} ->
         {:error, format_encrypted_add_error(context)}
@@ -238,30 +242,38 @@ defmodule GitFoil.Commands.ReEncrypt do
   defp success_message(key_action) do
     key_info = case key_action do
       {:use_existing} -> "Used existing encryption key (.git/git_foil/master.key)"
-      {:generate_new} -> "Used newly generated encryption key (.git/git_foil/master.key)"
+      {:generate_new} -> "Generated new encryption key (.git/git_foil/master.key)\n       Old key backed up with timestamp."
       _ -> "Used encryption key (.git/git_foil/master.key)"
     end
 
+    key_rotation_note = case key_action do
+      {:generate_new} -> """
+
+    ⚠️  IMPORTANT - New keys generated:
+       All team members need the NEW key file to decrypt files.
+       Share the new .git/git_foil/master.key securely with your team.
+       Old keys will no longer work after you push these changes.
+"""
+      _ -> ""
+    end
+
     """
-    ✅  Re-encryption complete!
+    ✅  Rekey complete!
 
     📋  What happened:
        #{key_info}
-       Files re-encrypted and now match your current .gitattributes patterns.
+       Files rekeyed and now match your current .gitattributes patterns.
 
        🔍  What this did:
           git rm --cached -r .            # Remove all files from index
           git add <each-file>             # Re-add each file (triggers clean filter)
-
+#{key_rotation_note}
     💡  Next step - commit the changes:
-       git-foil commit
-
-       🔍  What this does:
-          git add .
-          git commit -m "Re-encrypt files with updated patterns"
+       git commit -m "Rekey repository with updated encryption"
+       git push
 
     📌 Note: Files in your working directory are unchanged.
-       Only the versions stored in Git have been re-encrypted.
+       Only the versions stored in Git have been rekeyed.
     """
   end
 
