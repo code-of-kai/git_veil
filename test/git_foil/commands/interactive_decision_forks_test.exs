@@ -6,13 +6,13 @@ defmodule GitFoil.Commands.InteractiveDecisionForksTest do
   - configure: 8 paths (H1-H7 + custom patterns)
   - unencrypt: 5 paths (I1-I5, J1-J2)
   - encrypt: 8 paths (K1-K4, L1-L4)
-  - re-encrypt: 4 paths (M1-M4)
+  - rekey: 4 paths (M1-M4)
 
   Total: 25 paths
   """
   use ExUnit.Case, async: false
 
-  alias GitFoil.Commands.{Configure, Encrypt, ReEncrypt, Unencrypt, Pattern}
+  alias GitFoil.Commands.{Configure, Encrypt, Rekey, Unencrypt, Pattern}
   alias GitFoil.TestMocks.MockTerminal
 
   setup do
@@ -281,7 +281,7 @@ defmodule GitFoil.Commands.InteractiveDecisionForksTest do
     test "Path M1: User presses Enter - Re-encrypt and stage (default)" do
       MockTerminal.configure(inputs: [""])
 
-      result = ReEncrypt.run(terminal: MockTerminal)
+      result = Rekey.run(terminal: MockTerminal)
 
       assert match?({:ok, _}, result) or match?({:error, _}, result)
     end
@@ -289,7 +289,7 @@ defmodule GitFoil.Commands.InteractiveDecisionForksTest do
     test "Path M2: User enters '1' - Re-encrypt and stage" do
       MockTerminal.configure(inputs: ["1"])
 
-      result = ReEncrypt.run(terminal: MockTerminal)
+      result = Rekey.run(terminal: MockTerminal)
 
       assert match?({:ok, _}, result) or match?({:error, _}, result)
     end
@@ -297,7 +297,7 @@ defmodule GitFoil.Commands.InteractiveDecisionForksTest do
     test "Path M3: User enters '2' - Re-encrypt only (don't stage)" do
       MockTerminal.configure(inputs: ["2"])
 
-      result = ReEncrypt.run(terminal: MockTerminal)
+      result = Rekey.run(terminal: MockTerminal)
 
       assert match?({:ok, _}, result) or match?({:error, _}, result)
     end
@@ -305,7 +305,7 @@ defmodule GitFoil.Commands.InteractiveDecisionForksTest do
     test "Path M4: User enters invalid choice - Error" do
       MockTerminal.configure(inputs: ["99"])
 
-      result = ReEncrypt.run(terminal: MockTerminal)
+      result = Rekey.run(terminal: MockTerminal)
 
       assert {:error, msg} = result
       assert msg =~ "Invalid"

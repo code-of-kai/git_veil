@@ -14,7 +14,7 @@ defmodule GitFoil.Integration.SubdirectoryRegressionTest do
   - encrypt
   - pattern (configure)
   - unencrypt
-  - re_encrypt
+  - rekey
   """
 
   use ExUnit.Case, async: false
@@ -162,18 +162,18 @@ defmodule GitFoil.Integration.SubdirectoryRegressionTest do
     end
   end
 
-  describe "re-encrypt command with subdirectories" do
-    test "re-encrypts files in all subdirectories" do
+  describe "rekey command with subdirectories" do
+    test "rekeys files in all subdirectories" do
       setup_test_repo_with_subdirs()
       init_and_commit()
 
       # Add new files in subdirectories
       File.write!("subdir1/subdir2/new.txt", "new file")
 
-      # Run re-encrypt
+      # Run rekey
       capture_io(fn ->
         send_input(["1"])  # Use existing key
-        GitFoil.Commands.ReEncrypt.run()
+        GitFoil.Commands.Rekey.run()
       end)
 
       # Verify new file in subdirectory was included
@@ -181,7 +181,7 @@ defmodule GitFoil.Integration.SubdirectoryRegressionTest do
       assert status_output =~ "subdir1/subdir2/new.txt"
     end
 
-    test "reports correct count when re-encrypting with subdirectories" do
+    test "reports correct count when rekeying with subdirectories" do
       setup_test_repo_with_subdirs()
       init_and_commit()
 
@@ -190,10 +190,10 @@ defmodule GitFoil.Integration.SubdirectoryRegressionTest do
 
       output = capture_io(fn ->
         send_input(["1"])  # Use existing key
-        GitFoil.Commands.ReEncrypt.run()
+        GitFoil.Commands.Rekey.run()
       end)
 
-      # Should report re-encrypting all files including subdirectories
+      # Should report rekeying all files including subdirectories
       assert output =~ ~r/Re-encrypting \d+ files/i
     end
   end

@@ -29,7 +29,7 @@ defmodule GitFoil.CLI do
   ```
   """
 
-  alias GitFoil.Commands.{Commit, Encrypt, Init, Pattern, ReEncrypt, Unencrypt}
+  alias GitFoil.Commands.{Commit, Encrypt, Init, Pattern, Rekey, Unencrypt}
 
   @version Mix.Project.config()[:version] || "dev"
 
@@ -95,7 +95,7 @@ defmodule GitFoil.CLI do
 
   defp parse_args(["unencrypt" | rest]), do: {:unencrypt, parse_options(rest)}
 
-  defp parse_args(["re-encrypt" | rest]), do: {:re_encrypt, parse_options(rest)}
+  defp parse_args(["rekey" | rest]), do: {:rekey, parse_options(rest)}
 
   defp parse_args(args) do
     {:error, "Unknown command: #{Enum.join(args, " ")}"}
@@ -197,8 +197,8 @@ defmodule GitFoil.CLI do
     Unencrypt.run(opts)
   end
 
-  defp execute({:re_encrypt, opts}) do
-    ReEncrypt.run(opts)
+  defp execute({:rekey, opts}) do
+    Rekey.run(opts)
   end
 
   defp execute({:error, message}) do
@@ -245,7 +245,7 @@ defmodule GitFoil.CLI do
         list-patterns               List all configured encryption patterns
         encrypt                     Encrypt all files matching patterns
         unencrypt                   Remove all GitFoil encryption (decrypt all files)
-        re-encrypt                  Re-encrypt all files (use after changing patterns)
+        rekey                       Rekey repository (generate new keys or refresh with existing)
         commit                      Commit .gitattributes changes
         version                     Show version information
         help                        Show this help message
