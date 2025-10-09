@@ -293,7 +293,7 @@ defmodule GitFoil.Commands.Unencrypt do
     if keep_key do
       IO.puts("🔑  Preserving master encryption key...")
       IO.puts("   Key location: .git/git_foil/master.key")
-      IO.puts("   You can re-encrypt later with: git-foil encrypt\n")
+      IO.puts("   You can encrypt files again later with: git-foil encrypt\n")
       :ok
     else
       IO.puts("🗑️     Removing master encryption key...")

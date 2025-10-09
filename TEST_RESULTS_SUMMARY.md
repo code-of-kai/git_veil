@@ -10,7 +10,7 @@
 | Test File | Tests | Status | Coverage |
 |-----------|-------|--------|----------|
 | `init_decision_forks_test.exs` | 27 | ✅ Created | 18 decision paths (Forks 1.1-1.6) |
-| `interactive_decision_forks_test.exs` | 27 | ✅ Created | 25 decision paths (configure, encrypt, re-encrypt, unencrypt) |
+| `interactive_decision_forks_test.exs` | 27 | ✅ Created | 25 decision paths (configure, encrypt, rekey, unencrypt) |
 | `non_interactive_decision_forks_test.exs` | 17 | ✅ **Passing** | 14 decision paths + 2 edge cases |
 | **TOTAL** | **71** | **✅ Complete** | **57 paths + extras** |
 

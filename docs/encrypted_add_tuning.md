@@ -24,7 +24,7 @@ internal.
 git-foil encrypt --concurrency 6 --no-progress
 
 # re-encrypt using the recommended value detected at init time
-git-foil re-encrypt --auto-concurrency
+git-foil rekey --auto-concurrency
 ```
 
 If we decide to surface these, the commands can:

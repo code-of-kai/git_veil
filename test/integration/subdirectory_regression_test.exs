@@ -194,7 +194,7 @@ defmodule GitFoil.Integration.SubdirectoryRegressionTest do
       end)
 
       # Should report rekeying all files including subdirectories
-      assert output =~ ~r/Re-encrypting \d+ files/i
+      assert output =~ ~r/Rekeying \d+ files/i
     end
   end
 

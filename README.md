@@ -279,15 +279,15 @@ git-foil pattern list
 git-foil pattern remove "*.env"
 ```
 
-### Re-encrypting Files
+### Rekeying Files
 
-If you change your password or update encryption patterns:
+If you need to rotate keys or refresh encryption after pattern changes:
 
 ```bash
-git-foil re-encrypt
+git-foil rekey
 ```
 
-This re-encrypts all marked files with new keys.
+This rekeys all marked files (generates new keys or reuses existing ones).
 
 ### Checking Status
 
