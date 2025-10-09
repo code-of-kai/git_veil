@@ -1,6 +1,6 @@
 use rustler::{Env, Binary, Error, OwnedBinary};
 
-rustler::init!("Elixir.GitVeil.Native.ChaCha20Poly1305Nif");
+rustler::init!("Elixir.GitFoil.Native.ChaCha20Poly1305Nif");
 
 /// ChaCha20-Poly1305 Encryption (IETF variant)
 ///

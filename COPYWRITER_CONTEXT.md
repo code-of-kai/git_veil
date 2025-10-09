@@ -1,7 +1,7 @@
-# GitVeil Copywriting Context
+# GitFoil Copywriting Context
 
 ## Project Overview
-GitVeil is a triple-layer quantum-resistant encryption system for Git repositories. It provides military-grade security with zero workflow friction.
+GitFoil is a triple-layer quantum-resistant encryption system for Git repositories. It provides military-grade security with zero workflow friction.
 
 ## Target Audience
 **Developers who:**
@@ -26,7 +26,7 @@ GitVeil is a triple-layer quantum-resistant encryption system for Git repositori
 - "Piggybacks invisibly on every Git command."
 
 **Bad examples:**
-- "GitVeil leverages cutting-edge cryptographic primitives..."
+- "GitFoil leverages cutting-edge cryptographic primitives..."
 - "Our revolutionary approach to security..."
 - "Industry-leading encryption solution..."
 
@@ -47,7 +47,7 @@ Each encryption layer uses AEAD (Authenticated Encryption). When you decrypt Lay
 While brute-force is limited by the 256-bit master key (2^256), **algorithmic attacks face multiplicative odds:**
 
 ```
-P(break GitVeil) = P(break AES) × P(break Ascon) × P(break ChaCha20)
+P(break GitFoil) = P(break AES) × P(break Ascon) × P(break ChaCha20)
 ```
 
 If each has 1% chance of a critical flaw:
@@ -102,10 +102,10 @@ Same file content → Same ciphertext (required for Git's content-addressable st
 - Bottleneck: Ascon layer (software-only, no hardware acceleration yet)
 
 ### Master Key Security
-Stored in `.gitveil/master.key`:
+Stored in `.gitfoil/master.key`:
 - Auto-gitignored (never committed)
 - Key loss = permanent data loss
-- Rotate with `git-veil re-encrypt`
+- Rotate with `git-foil re-encrypt`
 - Enterprise: HSM/TPM integration coming
 
 ## Messaging Priorities
@@ -177,14 +177,14 @@ See the following files for complete technical context:
 1. **README.md** - Current project page (rewrite this)
 2. **docs/ADR-001-triple-layer-quantum-resistant-encryption.md** - Deep architectural rationale
 3. **demo_ascon.exs** - Live demo showing encryption/decryption
-4. **lib/git_veil/core/encryption_engine.ex** - Core implementation
-5. **test/git_veil/core/encryption_engine_test.exs** - What it guarantees
+4. **lib/git_foil/core/encryption_engine.ex** - Core implementation
+5. **test/git_foil/core/encryption_engine_test.exs** - What it guarantees
 
 ---
 
 ## Copywriting Task
 
-**Rewrite the GitHub README.md** to communicate GitVeil's value proposition using:
+**Rewrite the GitHub README.md** to communicate GitFoil's value proposition using:
 - Steve Jobs brevity and punch
 - Technical credibility without jargon overload
 - Focus on the three magic moments:

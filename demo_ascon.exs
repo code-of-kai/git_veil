@@ -2,12 +2,12 @@
 
 # Demo: Triple-Layer Quantum-Resistant Encryption with Ascon-128a
 
-IO.puts("\n🔐 GitVeil Triple-Layer Quantum-Resistant Encryption Demo\n")
+IO.puts("\n🔐 GitFoil Triple-Layer Quantum-Resistant Encryption Demo\n")
 IO.puts("=" |> String.duplicate(60))
 
-alias GitVeil.Core.{EncryptionEngine, KeyDerivation}
-alias GitVeil.Core.Types.EncryptionKey
-alias GitVeil.Adapters.{OpenSSLCrypto, AsconCrypto}
+alias GitFoil.Core.{EncryptionEngine, KeyDerivation}
+alias GitFoil.Core.Types.EncryptionKey
+alias GitFoil.Adapters.{OpenSSLCrypto, AsconCrypto}
 
 # Test data
 plaintext = "Top Secret: Launch codes are 1-2-3-4-5"

@@ -1,4 +1,4 @@
-# GitVeil Hexagonal Architecture Refactoring Log
+# GitFoil Hexagonal Architecture Refactoring Log
 
 **Date Started:** 2025-10-05
 **Goal:** Extract infrastructure from commands layer while preserving all UX work
@@ -13,9 +13,9 @@
 **Extracted:** 258 lines, 890 lines of UX preserved in init.ex
 
 **Extractions:**
-- ✅ `lib/git_veil/infrastructure/git.ex` - Git CLI operations (143 lines)
-- ✅ `lib/git_veil/infrastructure/terminal.ex` - Spinner/progress mechanisms (115 lines)
-- ❌ `lib/git_veil/infrastructure/files.ex` - Not needed (no file I/O to extract)
+- ✅ `lib/git_foil/infrastructure/git.ex` - Git CLI operations (143 lines)
+- ✅ `lib/git_foil/infrastructure/terminal.ex` - Spinner/progress mechanisms (115 lines)
+- ❌ `lib/git_foil/infrastructure/files.ex` - Not needed (no file I/O to extract)
 
 **UX Preserved:**
 - ✅ All prompt text and messaging stays in init.ex
@@ -30,9 +30,9 @@
 **Created:** 2 port behaviours, implemented by 2 adapters
 
 **New Ports:**
-- ✅ `lib/git_veil/ports/repository.ex` (65 lines)
-- ✅ `lib/git_veil/ports/terminal.ex` (62 lines)
-- ❌ `lib/git_veil/ports/filesystem.ex` - Not needed
+- ✅ `lib/git_foil/ports/repository.ex` (65 lines)
+- ✅ `lib/git_foil/ports/terminal.ex` (62 lines)
+- ❌ `lib/git_foil/ports/filesystem.ex` - Not needed
 
 **Adapter Implementations:**
 - ✅ Git implements Repository port (@behaviour + @impl)
@@ -60,7 +60,7 @@
 #### Step 1.1: Create infrastructure/git.ex
 **Status:** ✅ COMPLETED
 **Lines:** 143 lines
-**Created:** `lib/git_veil/infrastructure/git.ex`
+**Created:** `lib/git_foil/infrastructure/git.ex`
 
 **Functions extracted:**
 - `verify_repository/0` - Check if we're in a Git repo
@@ -80,7 +80,7 @@
 #### Step 1.2: Create infrastructure/terminal.ex
 **Status:** ✅ COMPLETED
 **Lines:** 115 lines
-**Created:** `lib/git_veil/infrastructure/terminal.ex`
+**Created:** `lib/git_foil/infrastructure/terminal.ex`
 
 **Functions extracted:**
 - `with_spinner/3` - Run work with animated spinner
@@ -97,10 +97,10 @@
 #### Step 1.3: Update init.ex to use infrastructure
 **Status:** ✅ COMPLETED
 **Lines changed:** ~50 replacements across init.ex
-**File:** `lib/git_veil/commands/init.ex`
+**File:** `lib/git_foil/commands/init.ex`
 
 **Changes:**
-- Added `alias GitVeil.Infrastructure.{Git, Terminal}`
+- Added `alias GitFoil.Infrastructure.{Git, Terminal}`
 - Replaced `System.cmd("git", ...)` → `Git.*` calls (15 replacements)
 - Replaced `IO.gets` → `Terminal.safe_gets` (5 replacements)
 - Replaced spinner logic → `Terminal.with_spinner` (3 replacements)
@@ -142,11 +142,11 @@
 **Status:** ✅ COMPLETED
 
 **Files Created:**
-- `lib/git_veil/infrastructure/git.ex` (143 lines)
-- `lib/git_veil/infrastructure/terminal.ex` (115 lines)
+- `lib/git_foil/infrastructure/git.ex` (143 lines)
+- `lib/git_foil/infrastructure/terminal.ex` (115 lines)
 
 **Files Modified:**
-- `lib/git_veil/commands/init.ex` (reduced from ~935 to ~890 lines)
+- `lib/git_foil/commands/init.ex` (reduced from ~935 to ~890 lines)
 
 **Total Infrastructure Extracted:** 258 lines
 **Total UX Preserved:** 100%
@@ -159,7 +159,7 @@
 
 ### Step 2.1: Create Repository Port
 **Status:** ✅ COMPLETED
-**File:** `lib/git_veil/ports/repository.ex` (65 lines)
+**File:** `lib/git_foil/ports/repository.ex` (65 lines)
 
 **Callbacks defined:**
 - `verify_repository/0` - Verify Git repository exists
@@ -176,7 +176,7 @@
 
 ### Step 2.2: Create Terminal Port
 **Status:** ✅ COMPLETED
-**File:** `lib/git_veil/ports/terminal.ex` (62 lines)
+**File:** `lib/git_foil/ports/terminal.ex` (62 lines)
 
 **Callbacks defined:**
 - `with_spinner/3` - Execute work with spinner animation
@@ -189,10 +189,10 @@
 
 ### Step 2.3: Implement Repository Port
 **Status:** ✅ COMPLETED
-**File:** `lib/git_veil/infrastructure/git.ex`
+**File:** `lib/git_foil/infrastructure/git.ex`
 
 **Changes:**
-- Added `@behaviour GitVeil.Ports.Repository`
+- Added `@behaviour GitFoil.Ports.Repository`
 - Added `@impl true` to all 9 callback functions
 - Compile-time verification of port implementation
 
@@ -200,10 +200,10 @@
 
 ### Step 2.4: Implement Terminal Port
 **Status:** ✅ COMPLETED
-**File:** `lib/git_veil/infrastructure/terminal.ex`
+**File:** `lib/git_foil/infrastructure/terminal.ex`
 
 **Changes:**
-- Added `@behaviour GitVeil.Ports.Terminal`
+- Added `@behaviour GitFoil.Ports.Terminal`
 - Added `@impl true` to all 5 callback functions
 - Compile-time verification of port implementation
 
@@ -231,12 +231,12 @@
 **Status:** ✅ COMPLETED
 
 **Files Created:**
-- `lib/git_veil/ports/repository.ex` (65 lines)
-- `lib/git_veil/ports/terminal.ex` (62 lines)
+- `lib/git_foil/ports/repository.ex` (65 lines)
+- `lib/git_foil/ports/terminal.ex` (62 lines)
 
 **Files Modified:**
-- `lib/git_veil/infrastructure/git.ex` (added @behaviour, @impl annotations)
-- `lib/git_veil/infrastructure/terminal.ex` (added @behaviour, @impl annotations)
+- `lib/git_foil/infrastructure/git.ex` (added @behaviour, @impl annotations)
+- `lib/git_foil/infrastructure/terminal.ex` (added @behaviour, @impl annotations)
 
 **Total Port Definitions:** 127 lines
 **Benefits Unlocked:**
@@ -253,11 +253,11 @@
 
 ### Step 3.1: Update Init Module Signature
 **Status:** ✅ COMPLETED
-**File:** `lib/git_veil/commands/init.ex`
+**File:** `lib/git_foil/commands/init.ex`
 
 **Changes to `run/1`:**
-- Added `:repository` option (default: `GitVeil.Infrastructure.Git`)
-- Added `:terminal` option (default: `GitVeil.Infrastructure.Terminal`)
+- Added `:repository` option (default: `GitFoil.Infrastructure.Git`)
+- Added `:terminal` option (default: `GitFoil.Infrastructure.Terminal`)
 - Documented new options in moduledoc
 - Merged options into opts for passing to helper functions
 
@@ -337,7 +337,7 @@ defp verify_git_repository(opts) do
 **Status:** ✅ COMPLETED
 
 **Files Modified:**
-- `lib/git_veil/commands/init.ex` (~35 functions updated)
+- `lib/git_foil/commands/init.ex` (~35 functions updated)
 
 **Code Changes:**
 - Dependency injection enabled for repository and terminal

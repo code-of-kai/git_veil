@@ -2,7 +2,7 @@
 
 # Quick test for Schwaemm256-256 NIF
 
-alias GitVeil.Adapters.SchwaemmCrypto
+alias GitFoil.Adapters.SchwaemmCrypto
 
 # Test 1: Basic roundtrip
 IO.puts("\n=== Test 1: Basic Roundtrip ===")

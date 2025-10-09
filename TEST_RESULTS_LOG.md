@@ -28,13 +28,13 @@
    - **File:** test/integration/init_integration_test.exs:51
    - **Error:** file1.txt should be encrypted with 0x03
    - **Actual:** File not encrypted (plaintext)
-   - **Root Cause:** `git-veil init` doesn't properly encrypt existing committed files
+   - **Root Cause:** `git-foil init` doesn't properly encrypt existing committed files
 
 2. **re-encrypts files after unencrypt (REGRESSION TEST)**
    - **File:** test/integration/init_integration_test.exs:81
    - **Error:** Should be plaintext after unencrypt
    - **Actual:** File still encrypted after unencrypt
-   - **Root Cause:** `git-veil unencrypt` doesn't convert encrypted files to plaintext in git storage
+   - **Root Cause:** `git-foil unencrypt` doesn't convert encrypted files to plaintext in git storage
 
 3. **re-encrypts files that are already staged**
    - **File:** test/integration/init_integration_test.exs:119
@@ -57,7 +57,7 @@
 1. **converts encrypted files to plaintext in git storage (BUG TEST)**
    - **File:** test/integration/unencrypt_integration_test.exs:13
    - **Error:** BUG: Files should be plaintext in git storage after unencrypt, but they're still encrypted
-   - **Root Cause:** `git-veil unencrypt` doesn't properly convert files to plaintext in git
+   - **Root Cause:** `git-foil unencrypt` doesn't properly convert files to plaintext in git
 
 2. **removes git filters**
    - **File:** test/integration/unencrypt_integration_test.exs:40
@@ -85,40 +85,40 @@
 1. **init → encrypt → commit → unencrypt → init → encrypt again (FULL LIFECYCLE TEST)**
    - **File:** test/integration/end_to_end_scenarios_test.exs:13
    - **Error:** Expected truthy, got false (not plaintext after unencrypt)
-   - **Root Cause:** `git-veil unencrypt` doesn't work
+   - **Root Cause:** `git-foil unencrypt` doesn't work
 
 2. **plaintext repo → init encrypts existing files**
    - **File:** test/integration/end_to_end_scenarios_test.exs:48
    - **Error:** Expected 0x03, got 35 (ASCII '#' from "# My Project")
-   - **Root Cause:** `git-veil init` doesn't encrypt existing files
+   - **Root Cause:** `git-foil init` doesn't encrypt existing files
 
 3. **multiple encrypt/decrypt cycles maintain data integrity**
    - **File:** test/integration/end_to_end_scenarios_test.exs:82
    - **Error:** Expected truthy, got false (not plaintext)
-   - **Root Cause:** `git-veil unencrypt` doesn't work
+   - **Root Cause:** `git-foil unencrypt` doesn't work
 
 ---
 
 ## Bugs Identified
 
-### Critical Bug #1: git-veil init doesn't encrypt existing committed files
+### Critical Bug #1: git-foil init doesn't encrypt existing committed files
 **Severity:** HIGH
 **Impact:** Users with existing plaintext repos can't encrypt their files
-**Affected Code:** `lib/git_veil/commands/init.ex` - `add_files_with_progress/3`
+**Affected Code:** `lib/git_foil/commands/init.ex` - `add_files_with_progress/3`
 **Tests Failed:** 3 tests
 
 The bug we fixed earlier (removing from cache before re-adding) didn't fully solve the problem.
-When files are already committed as plaintext, `git-veil init` should re-encrypt them,
+When files are already committed as plaintext, `git-foil init` should re-encrypt them,
 but it's not working.
 
-### Critical Bug #2: git-veil unencrypt doesn't convert files to plaintext
+### Critical Bug #2: git-foil unencrypt doesn't convert files to plaintext
 **Severity:** CRITICAL
 **Impact:** Users can't remove encryption - files stay encrypted even after unencrypt
-**Affected Code:** `lib/git_veil/commands/unencrypt.ex` - `decrypt_files_with_progress/2`
+**Affected Code:** `lib/git_foil/commands/unencrypt.ex` - `decrypt_files_with_progress/2`
 **Tests Failed:** 5 tests
 
 This is the bug we discovered during manual testing. Files remain encrypted in git storage
-even after running `git-veil unencrypt`. The unencrypt command disables filters and tries
+even after running `git-foil unencrypt`. The unencrypt command disables filters and tries
 to re-add files, but the same git filter bug affects it: `git add` on already-staged files
 doesn't re-run the filter.
 
@@ -139,12 +139,12 @@ Both bugs #1 and #2 have the **same root cause**:
 When `git add <file>` is run on a file that's already in the git index with the same content,
 git **skips running the clean filter**. This is a git optimization.
 
-**In git-veil init:**
+**In git-foil init:**
 - Files are already in git as plaintext
 - Init tries to `git add` them to encrypt
 - Git sees they're already staged → skips clean filter → files stay plaintext
 
-**In git-veil unencrypt:**
+**In git-foil unencrypt:**
 - Unencrypt disables filters
 - Tries to `git add` files to store as plaintext
 - But files are already staged as encrypted → git skips processing → files stay encrypted
@@ -158,14 +158,14 @@ It doesn't fix:
 
 ## Required Fixes
 
-### Fix #1: Update git-veil init to handle existing committed files
-In `lib/git_veil/commands/init.ex`, the `add_files_with_progress/3` function needs to:
+### Fix #1: Update git-foil init to handle existing committed files
+In `lib/git_foil/commands/init.ex`, the `add_files_with_progress/3` function needs to:
 1. Force re-checkout from git (to ensure filters run)
 2. OR use `git add --renormalize` (forces filter re-run)
 3. OR `git rm --cached` THEN `git checkout HEAD <file>` THEN `git add`
 
-### Fix #2: Fix git-veil unencrypt
-In `lib/git_veil/commands/unencrypt.ex`, the `decrypt_files_with_progress/2` function needs to:
+### Fix #2: Fix git-foil unencrypt
+In `lib/git_foil/commands/unencrypt.ex`, the `decrypt_files_with_progress/2` function needs to:
 1. After disabling filters, force git to re-process files
 2. Use `git rm --cached <file>` then `git add <file>` for each file
 3. This will make git re-run the (now disabled) filter, storing plaintext
@@ -202,10 +202,10 @@ simulating git's actual behavior.
 
 ### Bugs Fixed
 
-#### ✅ Bug #1: git-veil init not encrypting existing committed files - FIXED
+#### ✅ Bug #1: git-foil init not encrypting existing committed files - FIXED
 **Solution:** Changed `git add` to `git add --renormalize` in `init.ex:714`
 - The `--renormalize` flag forces git to re-run clean/smudge filters even if file is already in index
-- This ensures existing committed files get encrypted when user runs `git-veil init`
+- This ensures existing committed files get encrypted when user runs `git-foil init`
 
 **Code Change:**
 ```elixir
@@ -216,7 +216,7 @@ System.cmd("git", ["add", file], stderr_to_stdout: true)
 System.cmd("git", ["add", "--renormalize", file], stderr_to_stdout: true)
 ```
 
-#### ✅ Bug #2: git-veil unencrypt not converting files to plaintext - FIXED
+#### ✅ Bug #2: git-foil unencrypt not converting files to plaintext - FIXED
 **Solution:** Three-part fix in `unencrypt.ex`:
 1. **Get encrypted file list BEFORE removing .gitattributes** (new function `get_encrypted_files/0`)
 2. **Set filters to `cat` instead of unsetting them** (in `disable_filters/0`)
@@ -231,19 +231,19 @@ System.cmd("git", ["add", "--renormalize", file], stderr_to_stdout: true)
 ```elixir
 # 1. New function to get list BEFORE removing .gitattributes
 defp get_encrypted_files do
-  # Uses git check-attr to find files with gitveil filter
+  # Uses git check-attr to find files with gitfoil filter
   # MUST be called before removing .gitattributes
 end
 
 # 2. Changed disable_filters to use cat instead of unset
 defp disable_filters do
-  System.cmd("git", ["config", "filter.gitveil.clean", "cat"], ...)
-  System.cmd("git", ["config", "filter.gitveil.smudge", "cat"], ...)
+  System.cmd("git", ["config", "filter.gitfoil.clean", "cat"], ...)
+  System.cmd("git", ["config", "filter.gitfoil.smudge", "cat"], ...)
 end
 
 # 3. Modified execution order
 with :ok <- verify_git_repository(),
-     :ok <- verify_gitveil_initialized(),
+     :ok <- verify_gitfoil_initialized(),
      :ok <- confirm_unencrypt(keep_key),
      {:ok, files_to_decrypt} <- get_encrypted_files(),  # Get list FIRST
      :ok <- remove_gitattributes_patterns(),
@@ -264,7 +264,7 @@ exit_code == 0 and String.trim(output) != ""
 All 8 remaining failures are **OpenSSL crypto unit tests** (test setup issues, not product bugs):
 - Tests use incorrect master key format (32 bytes instead of 64 bytes for test)
 - These are test infrastructure issues in `end_to_end_openssl_test.exs`
-- NOT related to core git-veil functionality
+- NOT related to core git-foil functionality
 
 **Core Product Status:** ✅ ALL FUNCTIONAL TESTS PASSING
 - ✅ All init tests pass (6/6)

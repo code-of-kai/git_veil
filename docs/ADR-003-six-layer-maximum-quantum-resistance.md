@@ -5,7 +5,7 @@
 
 ## Context
 
-GitVeil currently implements a 3-layer encryption system (ADR-001) with AES-256-GCM, Ascon-128a, and ChaCha20-Poly1305, providing 640-bit classical security and 320-bit post-quantum security.
+GitFoil currently implements a 3-layer encryption system (ADR-001) with AES-256-GCM, Ascon-128a, and ChaCha20-Poly1305, providing 640-bit classical security and 320-bit post-quantum security.
 
 ### Current Architecture (v2.0)
 ```
@@ -96,7 +96,7 @@ The layer ordering follows five security principles:
 Because intermediate ciphertexts are indistinguishable from random:
 - Breaking any 1-5 layers gives zero useful information
 - Attacker must search combined 1,408-bit key space
-- **P(break GitVeil) = P(break ALL 6 algorithms)**
+- **P(break GitFoil) = P(break ALL 6 algorithms)**
 
 #### Post-Quantum Security Analysis
 
@@ -193,7 +193,7 @@ fn deoxys_ii_256_decrypt(key: Binary, nonce: Binary, ciphertext: Binary, tag: Bi
 
 #### 2.1 Update CryptoProvider Behavior
 ```elixir
-# lib/git_veil/ports/crypto_provider.ex
+# lib/git_foil/ports/crypto_provider.ex
 
 @callback aegis_256_encrypt(
   key :: binary(),      # 32 bytes
@@ -245,8 +245,8 @@ fn deoxys_ii_256_decrypt(key: Binary, nonce: Binary, ciphertext: Binary, tag: Bi
 
 #### 3.1 AEGIS-256 Adapter
 ```elixir
-# lib/git_veil/adapters/aegis_crypto.ex
-defmodule GitVeil.Adapters.AegisCrypto do
+# lib/git_foil/adapters/aegis_crypto.ex
+defmodule GitFoil.Adapters.AegisCrypto do
   @moduledoc """
   AEGIS-256 authenticated encryption adapter.
 
@@ -254,9 +254,9 @@ defmodule GitVeil.Adapters.AegisCrypto do
   using AES round functions. Provides 256-bit security.
   """
 
-  @behaviour GitVeil.Ports.CryptoProvider
+  @behaviour GitFoil.Ports.CryptoProvider
 
-  alias GitVeil.Native.AegisNif
+  alias GitFoil.Native.AegisNif
 
   @impl true
   def aegis_256_encrypt(key, nonce, plaintext, aad)
@@ -305,8 +305,8 @@ end
 
 #### 3.2 Schwaemm256-256 Adapter
 ```elixir
-# lib/git_veil/adapters/schwaemm_crypto.ex
-defmodule GitVeil.Adapters.SchwaemmCrypto do
+# lib/git_foil/adapters/schwaemm_crypto.ex
+defmodule GitFoil.Adapters.SchwaemmCrypto do
   @moduledoc """
   Schwaemm256-256 authenticated encryption adapter.
 
@@ -314,9 +314,9 @@ defmodule GitVeil.Adapters.SchwaemmCrypto do
   the Sparkle permutation. Quantum-resistant design with 256-bit security.
   """
 
-  @behaviour GitVeil.Ports.CryptoProvider
+  @behaviour GitFoil.Ports.CryptoProvider
 
-  alias GitVeil.Native.SchwaemmNif
+  alias GitFoil.Native.SchwaemmNif
 
   @impl true
   def schwaemm256_256_encrypt(key, nonce, plaintext, aad)
@@ -336,8 +336,8 @@ end
 
 #### 3.3 Deoxys-II-256 Adapter
 ```elixir
-# lib/git_veil/adapters/deoxys_crypto.ex
-defmodule GitVeil.Adapters.DeoxysCrypto do
+# lib/git_foil/adapters/deoxys_crypto.ex
+defmodule GitFoil.Adapters.DeoxysCrypto do
   @moduledoc """
   Deoxys-II-256 authenticated encryption adapter.
 
@@ -345,9 +345,9 @@ defmodule GitVeil.Adapters.DeoxysCrypto do
   Nonce-misuse resistant with 256-bit security.
   """
 
-  @behaviour GitVeil.Ports.CryptoProvider
+  @behaviour GitFoil.Ports.CryptoProvider
 
-  alias GitVeil.Native.DeoxysNif
+  alias GitFoil.Native.DeoxysNif
 
   @impl true
   def deoxys_ii_256_encrypt(key, nonce, plaintext, aad)
@@ -369,8 +369,8 @@ end
 
 #### 4.1 Update DerivedKeys Type
 ```elixir
-# lib/git_veil/core/types/derived_keys.ex
-defmodule GitVeil.Core.Types.DerivedKeys do
+# lib/git_foil/core/types/derived_keys.ex
+defmodule GitFoil.Core.Types.DerivedKeys do
   @moduledoc """
   Six independent derived encryption keys for 6-layer encryption.
   """
@@ -391,7 +391,7 @@ end
 
 #### 4.2 Update KeyDerivation
 ```elixir
-# lib/git_veil/core/key_derivation.ex (UPDATE)
+# lib/git_foil/core/key_derivation.ex (UPDATE)
 
 @spec derive_keys(EncryptionKey.t(), String.t()) ::
   {:ok, DerivedKeys.t()} | {:error, term()}
@@ -401,12 +401,12 @@ def derive_keys(%EncryptionKey{key: master_key}, file_path)
     salt = :crypto.hash(:sha3_512, file_path) |> binary_part(0, 32)
 
     # Derive 6 independent keys
-    layer1_key = hkdf_sha3_512(master_key, salt, "GitVeil.Layer1.AES256", 32)
-    layer2_key = hkdf_sha3_512(master_key, salt, "GitVeil.Layer2.AEGIS256", 32)
-    layer3_key = hkdf_sha3_512(master_key, salt, "GitVeil.Layer3.Schwaemm256", 32)
-    layer4_key = hkdf_sha3_512(master_key, salt, "GitVeil.Layer4.DeoxysII256", 32)
-    layer5_key = hkdf_sha3_512(master_key, salt, "GitVeil.Layer5.Ascon128a", 16)
-    layer6_key = hkdf_sha3_512(master_key, salt, "GitVeil.Layer6.ChaCha20", 32)
+    layer1_key = hkdf_sha3_512(master_key, salt, "GitFoil.Layer1.AES256", 32)
+    layer2_key = hkdf_sha3_512(master_key, salt, "GitFoil.Layer2.AEGIS256", 32)
+    layer3_key = hkdf_sha3_512(master_key, salt, "GitFoil.Layer3.Schwaemm256", 32)
+    layer4_key = hkdf_sha3_512(master_key, salt, "GitFoil.Layer4.DeoxysII256", 32)
+    layer5_key = hkdf_sha3_512(master_key, salt, "GitFoil.Layer5.Ascon128a", 16)
+    layer6_key = hkdf_sha3_512(master_key, salt, "GitFoil.Layer6.ChaCha20", 32)
 
     derived = %DerivedKeys{
       layer1_key: layer1_key,
@@ -426,8 +426,8 @@ end
 
 #### 4.3 Create SixLayerCipher Module
 ```elixir
-# lib/git_veil/core/six_layer_cipher.ex
-defmodule GitVeil.Core.SixLayerCipher do
+# lib/git_foil/core/six_layer_cipher.ex
+defmodule GitFoil.Core.SixLayerCipher do
   @moduledoc """
   Six-layer authenticated encryption with maximum quantum resistance.
 
@@ -452,8 +452,8 @@ defmodule GitVeil.Core.SixLayerCipher do
                 P(break Deoxys) × P(break Ascon) × P(break ChaCha20)
   """
 
-  alias GitVeil.Core.Types.DerivedKeys
-  alias GitVeil.Ports.CryptoProvider
+  alias GitFoil.Core.Types.DerivedKeys
+  alias GitFoil.Ports.CryptoProvider
 
   @doc """
   Encrypts data through six layers.
@@ -770,8 +770,8 @@ Update EncryptionEngine and GitFilter to use SixLayerCipher with all 6 providers
 5. **Deoxys**: https://sites.google.com/view/deoxyscipher
 6. **Ascon**: https://ascon.iaik.tugraz.at/
 7. **Post-Quantum Cryptography**: NIST SP 800-208
-8. **GitVeil ADR-001**: Triple-Layer Quantum-Resistant Encryption
-9. **GitVeil ADR-002**: Hexagonal Architecture for Testability
+8. **GitFoil ADR-001**: Triple-Layer Quantum-Resistant Encryption
+9. **GitFoil ADR-002**: Hexagonal Architecture for Testability
 
 ## Implementation Checklist
 

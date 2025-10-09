@@ -3,10 +3,10 @@
 ## Project Structure
 
 ```
-git-veil-source/              # Source code (this directory)
+git-foil/              # Source code (this directory)
 ├── lib/                      # Elixir source code
 ├── native/                   # Rust NIFs
-├── _build/dev/rel/git_veil/  # Build output (dev mode)
+├── _build/dev/rel/git_foil/  # Build output (dev mode)
 ├── install.sh               # Production installation
 └── install-dev.sh           # Development installation (recommended)
 ```
@@ -30,7 +30,7 @@ This creates symlinks from `/usr/local/` to your `_build` directory, so rebuilds
 mix release --overwrite
 
 # 3. Test immediately (no reinstall needed!)
-git-veil --version
+git-foil --version
 ```
 
 ### Production Installation
@@ -43,10 +43,10 @@ When you want to create a proper production installation (copies files instead o
 
 ## Installation Locations
 
-- **Source**: `/Users/kaitaylor/Documents/Coding/git-veil-source`
-- **Build**: `/Users/kaitaylor/Documents/Coding/git-veil-source/_build/dev/rel/git_veil`
-- **Install**: `/usr/local/git-veil` (symlink to build in dev mode)
-- **Binary**: `/usr/local/bin/git-veil` (symlink to executable)
+- **Source**: `/Users/kaitaylor/Documents/Coding/git-foil`
+- **Build**: `/Users/kaitaylor/Documents/Coding/git-foil/_build/dev/rel/git_foil`
+- **Install**: `/usr/local/git-foil` (symlink to build in dev mode)
+- **Binary**: `/usr/local/bin/git-foil` (symlink to executable)
 
 ## Why This Approach?
 

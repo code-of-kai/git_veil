@@ -2,7 +2,7 @@
 
 # Quick test for ChaCha20-Poly1305 NIF
 
-alias GitVeil.Adapters.ChaCha20Poly1305Crypto
+alias GitFoil.Adapters.ChaCha20Poly1305Crypto
 
 # Test 1: Basic roundtrip
 IO.puts("\n=== Test 1: Basic Roundtrip ===")

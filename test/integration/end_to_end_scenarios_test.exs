@@ -1,7 +1,7 @@
 defmodule Integration.EndToEndScenariosTest do
   use ExUnit.Case, async: false
 
-  alias GitVeil.Test.GitTestHelper
+  alias GitFoil.Test.GitTestHelper
 
   @moduledoc """
   End-to-end scenario tests that simulate real-world usage patterns.
@@ -17,7 +17,7 @@ defmodule Integration.EndToEndScenariosTest do
         # Step 1: Create initial file
         GitTestHelper.create_file(repo_path, "secrets.env", "API_KEY=secret123")
 
-        # Step 2: Initialize git-veil
+        # Step 2: Initialize git-foil
         {_output, 0} = GitTestHelper.run_init(repo_path)
 
         # Step 3: Commit encrypted file
@@ -32,7 +32,7 @@ defmodule Integration.EndToEndScenariosTest do
         # Verify decrypted
         assert GitTestHelper.is_plaintext_in_git?(repo_path, "secrets.env")
 
-        # Step 5: Re-initialize git-veil (BUG TEST)
+        # Step 5: Re-initialize git-foil (BUG TEST)
         {_output, 0} = GitTestHelper.run_init(repo_path)
 
         # Step 6: Should re-encrypt existing files

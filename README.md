@@ -1,4 +1,4 @@
-## GitVeil
+## GitFoil
 
 ## **Three layers of encryption. Zero extra steps.**
 
@@ -30,7 +30,7 @@
 
 ## ---
 
-## What GitVeil Does
+## What GitFoil Does
 
 ## Encrypts your entire repository with three independent algorithms.
 
@@ -93,7 +93,7 @@
 ## With three:
 
 ## ```
-## P(break GitVeil) = P(break AES) × P(break Ascon) × P(break ChaCha20)
+## P(break GitFoil) = P(break AES) × P(break Ascon) × P(break ChaCha20)
 ## ```
 
 ## If each has a 1% chance of a critical flaw:
@@ -122,18 +122,18 @@
 
 ## ```bash
 ## Install
-## pip install gitveil
+## pip install gitfoil
 
 ## Initialize in your repo
-## gitveil init
+## git-foil init
 
 ## Enter master password (32+ characters recommended)
 ## Done.
 ## ```
 
-## GitVeil hooks into Git automatically. Pre-commit encrypts. Post-checkout decrypts.
+## GitFoil hooks into Git automatically. Pre-commit encrypts. Post-checkout decrypts.
 
-## You never run `gitveil` again.
+## You never run `git-foil` again.
 
 ## ---
 
@@ -219,7 +219,7 @@
 ## Installation
 
 ## ```bash
-## pip install gitveil
+## pip install gitfoil
 ## ```
 
 ## **Requirements:**  

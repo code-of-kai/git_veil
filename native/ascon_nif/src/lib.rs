@@ -1,4 +1,4 @@
-//! Ascon-128a NIF for GitVeil
+//! Ascon-128a NIF for GitFoil
 //!
 //! Provides Ascon-128a AEAD encryption/decryption via Rustler NIF.
 //!
@@ -153,4 +153,4 @@ fn decrypt<'a>(
     Ok(plaintext_binary.release(env))
 }
 
-rustler::init!("Elixir.GitVeil.Native.AsconNif");
+rustler::init!("Elixir.GitFoil.Native.AsconNif");

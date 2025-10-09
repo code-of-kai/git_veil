@@ -12,15 +12,15 @@ defmodule Integration.EndToEndOpenSSLTest do
   3. AES-256-GCM encryption (Layer 1)
   4. ChaCha20-Poly1305 encryption (Layer 2)
   5. AES-256-GCM encryption (Layer 3)
-  6. GitVeil format serialization
+  6. GitFoil format serialization
   7. Full decryption pipeline (reverse order)
 
   **CRITICAL: This test uses ONLY OpenSSLCrypto - no mocks allowed.**
   """
 
-  alias GitVeil.Adapters.{InMemoryKeyStorage, OpenSSLCrypto}
-  alias GitVeil.Core.{EncryptionEngine, KeyDerivation, TripleCipher}
-  alias GitVeil.Core.Types.EncryptionContext
+  alias GitFoil.Adapters.{InMemoryKeyStorage, OpenSSLCrypto}
+  alias GitFoil.Core.{EncryptionEngine, KeyDerivation, TripleCipher}
+  alias GitFoil.Core.Types.EncryptionContext
 
   setup do
     # Start real key storage
@@ -63,7 +63,7 @@ defmodule Integration.EndToEndOpenSSLTest do
       {:ok, encrypted} = EncryptionEngine.encrypt(plaintext, context, crypto: OpenSSLCrypto)
 
       # Verify encrypted format
-      assert String.starts_with?(encrypted, "GTVL"), "Must have GitVeil magic number"
+      assert String.starts_with?(encrypted, "GTFL"), "Must have GitFoil magic number"
       assert encrypted != plaintext, "Ciphertext must differ from plaintext"
       assert byte_size(encrypted) > byte_size(plaintext), "Ciphertext includes overhead"
 
@@ -130,7 +130,7 @@ defmodule Integration.EndToEndOpenSSLTest do
       {:ok, encrypted} = EncryptionEngine.encrypt(plaintext, context, crypto: OpenSSLCrypto)
 
       # Tamper with the ciphertext
-      tampered = String.replace(encrypted, "GTVL", "GTVX")
+      tampered = String.replace(encrypted, "GTFL", "GTVX")
 
       # Decryption should fail with REAL OpenSSL auth verification
       result = EncryptionEngine.decrypt(tampered, context, crypto: OpenSSLCrypto)
@@ -210,7 +210,7 @@ defmodule Integration.EndToEndOpenSSLTest do
 
       # Verify all encrypted
       Enum.each(encrypted_files, fn {_path, plaintext, encrypted} ->
-        assert String.starts_with?(encrypted, "GTVL")
+        assert String.starts_with?(encrypted, "GTFL")
         assert encrypted != plaintext
       end)
 
