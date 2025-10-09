@@ -1,6 +1,6 @@
 use rustler::{Env, Binary, Error, OwnedBinary};
 
-rustler::init!("Elixir.GitVeil.Native.DeoxysNif");
+rustler::init!("Elixir.GitFoil.Native.DeoxysNif");
 
 /// Deoxys-II-256 Encryption
 ///

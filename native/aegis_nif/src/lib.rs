@@ -1,6 +1,6 @@
 use rustler::{Env, Binary, Error, OwnedBinary};
 
-rustler::init!("Elixir.GitVeil.Native.AegisNif");
+rustler::init!("Elixir.GitFoil.Native.AegisNif");
 
 /// AEGIS-256 Encryption
 ///

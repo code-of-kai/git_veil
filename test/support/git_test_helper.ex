@@ -1,4 +1,4 @@
-defmodule GitVeil.Test.GitTestHelper do
+defmodule GitFoil.Test.GitTestHelper do
   @moduledoc """
   Helper module for creating and managing real git repositories in tests.
 
@@ -23,7 +23,7 @@ defmodule GitVeil.Test.GitTestHelper do
   def create_test_repo do
     # Create unique temp directory
     timestamp = System.system_time(:microsecond)
-    tmp_dir = Path.join(System.tmp_dir!(), "gitveil_test_#{timestamp}")
+    tmp_dir = Path.join(System.tmp_dir!(), "gitfoil_test_#{timestamp}")
     File.mkdir_p!(tmp_dir)
 
     # Initialize git repo
@@ -53,17 +53,17 @@ defmodule GitVeil.Test.GitTestHelper do
   end
 
   @doc """
-  Runs git-veil init in the test repo.
+  Runs git-foil init in the test repo.
 
   Automatically answers prompts with defaults (yes, encrypt everything, yes encrypt now).
   """
   def run_init(repo_path) do
-    # Create a script that pipes answers to git-veil init
+    # Create a script that pipes answers to git-foil init
     answers = "y\n1\ny\n"
 
     {output, exit_code} = System.cmd(
       "sh",
-      ["-c", "echo '#{answers}' | git-veil init"],
+      ["-c", "echo '#{answers}' | git-foil init"],
       cd: repo_path,
       stderr_to_stdout: true
     )
@@ -72,7 +72,7 @@ defmodule GitVeil.Test.GitTestHelper do
   end
 
   @doc """
-  Runs git-veil unencrypt in the test repo.
+  Runs git-foil unencrypt in the test repo.
 
   Automatically answers prompts with yes.
   """
@@ -82,7 +82,7 @@ defmodule GitVeil.Test.GitTestHelper do
 
     {output, exit_code} = System.cmd(
       "sh",
-      ["-c", "echo '#{answers}' | git-veil unencrypt"],
+      ["-c", "echo '#{answers}' | git-foil unencrypt"],
       cd: repo_path,
       stderr_to_stdout: true
     )
@@ -164,10 +164,10 @@ defmodule GitVeil.Test.GitTestHelper do
   end
 
   @doc """
-  Checks if git-veil is initialized (has master key).
+  Checks if git-foil is initialized (has master key).
   """
-  def gitveil_initialized?(repo_path) do
-    File.exists?(Path.join([repo_path, ".git", "git_veil", "master.key"]))
+  def gitfoil_initialized?(repo_path) do
+    File.exists?(Path.join([repo_path, ".git", "git_foil", "master.key"]))
   end
 
   @doc """
@@ -176,7 +176,7 @@ defmodule GitVeil.Test.GitTestHelper do
   def filters_configured?(repo_path) do
     {output, exit_code} = System.cmd(
       "git",
-      ["config", "--get", "filter.gitveil.clean"],
+      ["config", "--get", "filter.gitfoil.clean"],
       cd: repo_path
     )
 

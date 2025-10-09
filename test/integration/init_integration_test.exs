@@ -1,16 +1,16 @@
 defmodule Integration.InitTest do
   use ExUnit.Case, async: false
 
-  alias GitVeil.Test.GitTestHelper
+  alias GitFoil.Test.GitTestHelper
 
   @moduledoc """
-  Real integration tests for git-veil init.
+  Real integration tests for git-foil init.
 
-  These tests use actual git repositories and git-veil commands to catch
+  These tests use actual git repositories and git-foil commands to catch
   real bugs that mocks would hide (like the git add filter bug).
   """
 
-  describe "git-veil init with fresh repository" do
+  describe "git-foil init with fresh repository" do
     test "initializes encryption on empty repo" do
       repo_path = GitTestHelper.create_test_repo()
 
@@ -19,7 +19,7 @@ defmodule Integration.InitTest do
         {output, 0} = GitTestHelper.run_init(repo_path)
 
         # Verify setup
-        assert GitTestHelper.gitveil_initialized?(repo_path)
+        assert GitTestHelper.gitfoil_initialized?(repo_path)
         assert GitTestHelper.filters_configured?(repo_path)
         assert output =~ "setup complete"
       after
@@ -77,7 +77,7 @@ defmodule Integration.InitTest do
     end
   end
 
-  describe "git-veil init after unencrypt (regression test for bug)" do
+  describe "git-foil init after unencrypt (regression test for bug)" do
     test "re-encrypts files after unencrypt" do
       repo_path = GitTestHelper.create_test_repo()
 
@@ -115,7 +115,7 @@ defmodule Integration.InitTest do
     end
   end
 
-  describe "git-veil init with already staged files" do
+  describe "git-foil init with already staged files" do
     test "re-encrypts files that are already staged" do
       repo_path = GitTestHelper.create_test_repo()
 
@@ -129,7 +129,7 @@ defmodule Integration.InitTest do
         is_plaintext_before = GitTestHelper.is_plaintext_in_git?(repo_path, "test.txt")
         assert is_plaintext_before, "Should be plaintext before init"
 
-        # Now init git-veil
+        # Now init git-foil
         {_output, 0} = GitTestHelper.run_init(repo_path)
 
         # The staged file should now be encrypted
@@ -142,7 +142,7 @@ defmodule Integration.InitTest do
     end
   end
 
-  describe "git-veil init with multiple files of different sizes" do
+  describe "git-foil init with multiple files of different sizes" do
     test "encrypts small, medium, and large files correctly" do
       repo_path = GitTestHelper.create_test_repo()
 

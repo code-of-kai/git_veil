@@ -1,20 +1,20 @@
 #!/usr/bin/env elixir
 #
 # Smoke test: Verify deterministic encryption produces identical output
-# This validates that GitVeil will work with Git's content-addressable storage
+# This validates that GitFoil will work with Git's content-addressable storage
 #
 
 Mix.install([])
 
-# Add git_veil to load path
-Code.prepend_path("_build/dev/lib/git_veil/ebin")
+# Add git_foil to load path
+Code.prepend_path("_build/dev/lib/git_foil/ebin")
 Code.prepend_path("_build/dev/lib/pqclean/ebin")
 
-alias GitVeil.Core.{EncryptionEngine, Types.EncryptionKey}
-alias GitVeil.Adapters.{OpenSSLCrypto, InMemoryKeyStorage}
+alias GitFoil.Core.{EncryptionEngine, Types.EncryptionKey}
+alias GitFoil.Adapters.{OpenSSLCrypto, InMemoryKeyStorage}
 
 IO.puts("=" |> String.duplicate(70))
-IO.puts("GitVeil Deterministic Encryption Smoke Test")
+IO.puts("GitFoil Deterministic Encryption Smoke Test")
 IO.puts("=" |> String.duplicate(70))
 IO.puts("")
 
@@ -108,7 +108,7 @@ if all_match do
   IO.puts("✓ PASS: Encryption is deterministic - identical blobs produced")
 else
   IO.puts("✗ FAIL: Encryption is NOT deterministic - blobs differ!")
-  IO.puts("This is a CRITICAL issue - GitVeil will not work with Git.")
+  IO.puts("This is a CRITICAL issue - GitFoil will not work with Git.")
   System.halt(1)
 end
 
@@ -234,18 +234,18 @@ IO.puts("  • File path context separation works")
 IO.puts("")
 IO.puts("Git SHA-1 Hash: #{hash1}")
 IO.puts("")
-IO.puts("GitVeil is ready for Git filter integration!")
+IO.puts("GitFoil is ready for Git filter integration!")
 IO.puts("")
 
 # Write test files for manual git hash-object verification
 IO.puts("Writing test files for manual verification...")
-File.write!("/tmp/gitveil_encrypted_v1.bin", serialized1)
-File.write!("/tmp/gitveil_encrypted_v2.bin", serialized2)
-IO.puts("  /tmp/gitveil_encrypted_v1.bin")
-IO.puts("  /tmp/gitveil_encrypted_v2.bin")
+File.write!("/tmp/gitfoil_encrypted_v1.bin", serialized1)
+File.write!("/tmp/gitfoil_encrypted_v2.bin", serialized2)
+IO.puts("  /tmp/gitfoil_encrypted_v1.bin")
+IO.puts("  /tmp/gitfoil_encrypted_v2.bin")
 IO.puts("")
 IO.puts("You can verify with Git:")
-IO.puts("  git hash-object /tmp/gitveil_encrypted_v1.bin")
-IO.puts("  git hash-object /tmp/gitveil_encrypted_v2.bin")
+IO.puts("  git hash-object /tmp/gitfoil_encrypted_v1.bin")
+IO.puts("  git hash-object /tmp/gitfoil_encrypted_v2.bin")
 IO.puts("  (Both should output: #{hash1})")
 IO.puts("")

@@ -8,13 +8,13 @@ This document describes the comprehensive automated test suite covering all 57 d
 **Purpose:** Shared mock implementations for testing
 
 Contains:
-- **MockGit** - Implements `GitVeil.Ports.Repository` behavior
+- **MockGit** - Implements `GitFoil.Ports.Repository` behavior
 - **MockTerminal** - Mock terminal for testing interactive prompts
 
 **Usage:** Used across all decision fork tests to simulate Git operations and user input without actual file system changes or user interaction.
 
-### 2. `test/git_veil/commands/init_decision_forks_test.exs`
-**Purpose:** Comprehensive tests for `git-veil init` command
+### 2. `test/git_foil/commands/init_decision_forks_test.exs`
+**Purpose:** Comprehensive tests for `git-foil init` command
 
 **Coverage: 27 tests covering 18 decision paths**
 
@@ -59,7 +59,7 @@ Contains:
 - Path G3: User enters 'n' to skip encryption
 - Path G4: User enters invalid input (treated as 'no')
 
-### 3. `test/git_veil/commands/interactive_decision_forks_test.exs`
+### 3. `test/git_foil/commands/interactive_decision_forks_test.exs`
 **Purpose:** Tests for interactive commands (configure, encrypt, re-encrypt, unencrypt)
 
 **Coverage: 25 tests covering 25 decision paths**
@@ -101,7 +101,7 @@ Contains:
 - Path M3: User enters '2' - Re-encrypt only (don't stage)
 - Path M4: User enters invalid choice - Error
 
-### 4. `test/git_veil/commands/non_interactive_decision_forks_test.exs`
+### 4. `test/git_foil/commands/non_interactive_decision_forks_test.exs`
 **Purpose:** Tests for non-interactive commands
 
 **Coverage: 15 tests covering 14 decision paths**
@@ -130,10 +130,10 @@ Contains:
 - Path U1: Shows version number
 
 **Help Command (4 paths - Fork 14)**
-- Path V1: 'git-veil help' - shows general help
-- Path V2: 'git-veil help patterns' - shows pattern syntax help
-- Path V3: 'git-veil --help' - shows general help
-- Path V4: 'git-veil -h' - shows general help
+- Path V1: 'git-foil help' - shows general help
+- Path V2: 'git-foil help patterns' - shows pattern syntax help
+- Path V3: 'git-foil --help' - shows general help
+- Path V4: 'git-foil -h' - shows general help
 
 **Plus 2 edge cases:**
 - Unknown command returns error
@@ -145,34 +145,34 @@ Contains:
 
 ### Run All Decision Fork Tests
 ```bash
-cd /path/to/git-veil
+cd /path/to/git-foil
 
 # Run all decision fork tests
-mix test test/git_veil/commands/*_decision_forks_test.exs
+mix test test/git_foil/commands/*_decision_forks_test.exs
 
 # Run with coverage
-mix test test/git_veil/commands/*_decision_forks_test.exs --cover
+mix test test/git_foil/commands/*_decision_forks_test.exs --cover
 
 # Run in trace mode (shows each test as it runs)
-mix test test/git_veil/commands/*_decision_forks_test.exs --trace
+mix test test/git_foil/commands/*_decision_forks_test.exs --trace
 ```
 
 ### Run Individual Test Files
 ```bash
 # Init command tests (18 paths)
-mix test test/git_veil/commands/init_decision_forks_test.exs
+mix test test/git_foil/commands/init_decision_forks_test.exs
 
 # Interactive commands tests (25 paths)
-mix test test/git_veil/commands/interactive_decision_forks_test.exs
+mix test test/git_foil/commands/interactive_decision_forks_test.exs
 
 # Non-interactive commands tests (14 paths)
-mix test test/git_veil/commands/non_interactive_decision_forks_test.exs
+mix test test/git_foil/commands/non_interactive_decision_forks_test.exs
 ```
 
 ### Run Specific Test
 ```bash
 # Run a single test by line number
-mix test test/git_veil/commands/init_decision_forks_test.exs:42
+mix test test/git_foil/commands/init_decision_forks_test.exs:42
 
 # Run tests matching a pattern
 mix test --only pattern:"Repository State"
@@ -202,7 +202,7 @@ MockTerminal.configure(
 ### Test Isolation
 
 Each test:
-1. **Setup:** Cleans `.gitattributes` and `.git/git_veil`
+1. **Setup:** Cleans `.gitattributes` and `.git/git_foil`
 2. **Execute:** Runs command with mocked dependencies
 3. **Assert:** Verifies expected outcome
 4. **Cleanup:** Removes test files and clears process dictionary
@@ -298,10 +298,10 @@ end
 ## Test Output Example
 
 ```bash
-$ mix test test/git_veil/commands/init_decision_forks_test.exs
+$ mix test test/git_foil/commands/init_decision_forks_test.exs
 
 Compiling 3 files (.ex)
-Generated git_veil app
+Generated git_foil app
 ...........................
 
 Finished in 45.2 seconds (0.00s async, 45.2s sync)
@@ -316,5 +316,5 @@ Randomized with seed 123456
 
 - **MANUAL_TEST_MATRIX.md** - Complete manual test documentation
 - **COMMAND_DECISION_TREE.md** - Command overview and decision trees
-- **test/git_veil/commands/init_test.exs** - Original init tests (pattern source)
+- **test/git_foil/commands/init_test.exs** - Original init tests (pattern source)
 - **test/support/test_mocks.ex** - Shared mock implementations

@@ -155,7 +155,7 @@ This is a web application written using the Phoenix web framework.
 
 
 
-# Agent Guidelines for GitVeil
+# Agent Guidelines for GitFoil
 
 ## Git Commit Rules - CRITICAL
 
@@ -233,7 +233,7 @@ gh api repos/owner/repo/commits/branch --jq '.commit.message'
 
 ## Project-Specific Rules
 
-### GitVeil Architecture
+### GitFoil Architecture
 
 - Follow Hexagonal (Ports & Adapters) pattern strictly
 - Core domain has zero I/O dependencies
@@ -262,13 +262,13 @@ gh api repos/owner/repo/commits/branch --jq '.commit.message'
 **CRITICAL: The installed binary is a symlink to the DEV build**
 
 ```bash
-/usr/local/bin/git-veil -> /Users/kaitaylor/Documents/Coding/git-veil/_build/dev/rel/git_veil/bin/git-veil
+/usr/local/bin/git-foil -> /Users/kaitaylor/Documents/Coding/git-foil/_build/dev/rel/git_foil/bin/git-foil
 ```
 
 **To update the binary after code changes:**
 
 ```bash
-cd /Users/kaitaylor/Documents/Coding/git-veil
+cd /Users/kaitaylor/Documents/Coding/git-foil
 mix release --overwrite  # Builds DEV version (NOT prod)
 ```
 
@@ -278,7 +278,7 @@ mix release --overwrite  # Builds DEV version (NOT prod)
 
 ### Why Mix Release (not escript)
 
-- GitVeil uses **Mix releases**, not escripts
+- GitFoil uses **Mix releases**, not escripts
 - Native dependencies (pqclean_nif.so, Rust NIFs) require a release
 - Escripts cannot bundle .so files needed for quantum-resistant crypto
 - The release is configured with `include_erts: false` to use system Erlang

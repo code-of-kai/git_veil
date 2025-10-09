@@ -1,14 +1,14 @@
 # Deterministic Encryption Validation Results
 
 **Date:** 2025-10-04
-**Test:** Smoke test to validate GitVeil's deterministic encryption works with Git
+**Test:** Smoke test to validate GitFoil's deterministic encryption works with Git
 **Status:** ✅ **VALIDATED - Ready for Git Filter Integration**
 
 ---
 
 ## Executive Summary
 
-GitVeil's triple-layer AEAD encryption **successfully produces deterministic output**, making it compatible with Git's content-addressable storage model. The same plaintext encrypted twice produces byte-identical encrypted blobs, ensuring Git will not detect spurious changes.
+GitFoil's triple-layer AEAD encryption **successfully produces deterministic output**, making it compatible with Git's content-addressable storage model. The same plaintext encrypted twice produces byte-identical encrypted blobs, ensuring Git will not detect spurious changes.
 
 ## Test Results
 
@@ -44,16 +44,16 @@ Ciphertext: 169 bytes  ==  169 bytes   ✓ (byte-identical)
 
 **Git SHA-1 Hashes:**
 ```bash
-$ git hash-object /tmp/gitveil_encrypted_v1.bin
+$ git hash-object /tmp/gitfoil_encrypted_v1.bin
 2e921caef134c3d96173e21798d30294799ae272
 
-$ git hash-object /tmp/gitveil_encrypted_v2.bin
+$ git hash-object /tmp/gitfoil_encrypted_v2.bin
 2e921caef134c3d96173e21798d30294799ae272
 ```
 
 **Verification:**
 ```bash
-$ diff /tmp/gitveil_encrypted_v1.bin /tmp/gitveil_encrypted_v2.bin
+$ diff /tmp/gitfoil_encrypted_v1.bin /tmp/gitfoil_encrypted_v2.bin
 (no output - files are byte-identical)
 ```
 
@@ -242,7 +242,7 @@ $ cat file.txt                        # shows "secret"
 
 ### Immediate (Next Session)
 
-1. **Implement Git Filter** (`lib/git_veil/adapters/git_filter.ex`)
+1. **Implement Git Filter** (`lib/git_foil/adapters/git_filter.ex`)
    - stdin/stdout handling
    - Error handling and logging
    - Integration with EncryptionEngine
@@ -271,7 +271,7 @@ $ cat file.txt                        # shows "secret"
 
 ```
 ======================================================================
-GitVeil Deterministic Encryption Smoke Test
+GitFoil Deterministic Encryption Smoke Test
 ======================================================================
 
 Test 1: Generating master key...

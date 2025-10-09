@@ -1,9 +1,9 @@
-defmodule GitVeil.MixProject do
+defmodule GitFoil.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :git_veil,
+      app: :git_foil,
       version: "0.3.0",
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
@@ -32,7 +32,7 @@ defmodule GitVeil.MixProject do
         ]
       ],
       # CLI escript configuration
-      escript: [main_module: GitVeil.CLI, name: "git-veil"],
+      escript: [main_module: GitFoil.CLI, name: "git-foil"],
       # Test coverage
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
@@ -47,7 +47,7 @@ defmodule GitVeil.MixProject do
       ],
       # Mix Release configuration
       releases: [
-        git_veil: [
+        git_foil: [
           include_erts: false,
           include_executables_for: [:unix],
           steps: [:assemble, &create_cli_wrapper/1]
@@ -63,13 +63,13 @@ defmodule GitVeil.MixProject do
   def application do
     [
       extra_applications: [:logger, :crypto],
-      mod: {GitVeil.Application, []}
+      mod: {GitFoil.Application, []}
     ]
   end
 
   # Custom release step to create CLI wrapper
   defp create_cli_wrapper(release) do
-    bin_path = Path.join([release.path, "bin", "git-veil"])
+    bin_path = Path.join([release.path, "bin", "git-foil"])
 
     wrapper_script = """
     #!/bin/sh
@@ -87,7 +87,7 @@ defmodule GitVeil.MixProject do
     done
     ARGS=$(echo "$ARGS" | sed 's/^,//')
 
-    exec "$RELEASE_ROOT/bin/git_veil" eval "GitVeil.CLI.main([$ARGS])"
+    exec "$RELEASE_ROOT/bin/git_foil" eval "GitFoil.CLI.main([$ARGS])"
     """
 
     File.write!(bin_path, wrapper_script)

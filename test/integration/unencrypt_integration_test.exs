@@ -1,15 +1,15 @@
 defmodule Integration.UnencryptTest do
   use ExUnit.Case, async: false
 
-  alias GitVeil.Test.GitTestHelper
+  alias GitFoil.Test.GitTestHelper
 
   @moduledoc """
-  Real integration tests for git-veil unencrypt.
+  Real integration tests for git-foil unencrypt.
 
   Tests that unencrypt actually converts encrypted files to plaintext in git storage.
   """
 
-  describe "git-veil unencrypt" do
+  describe "git-foil unencrypt" do
     test "converts encrypted files to plaintext in git storage" do
       repo_path = GitTestHelper.create_test_repo()
 
@@ -25,7 +25,7 @@ defmodule Integration.UnencryptTest do
 
         # Unencrypt
         {output, 0} = GitTestHelper.run_unencrypt(repo_path)
-        assert output =~ "GitVeil encryption removed"
+        assert output =~ "GitFoil encryption removed"
 
         # THIS IS THE BUG TEST: Files in git should now be plaintext
         # The bug was: files stayed encrypted in git storage even after unencrypt
@@ -61,13 +61,13 @@ defmodule Integration.UnencryptTest do
       try do
         # Initialize encryption
         {_output, 0} = GitTestHelper.run_init(repo_path)
-        assert GitTestHelper.gitveil_initialized?(repo_path), "Key should exist"
+        assert GitTestHelper.gitfoil_initialized?(repo_path), "Key should exist"
 
         # Unencrypt
         {_output, 0} = GitTestHelper.run_unencrypt(repo_path)
 
         # Key should be deleted
-        refute GitTestHelper.gitveil_initialized?(repo_path), "Key should be deleted"
+        refute GitTestHelper.gitfoil_initialized?(repo_path), "Key should be deleted"
       after
         GitTestHelper.cleanup_test_repo(repo_path)
       end
@@ -86,10 +86,10 @@ defmodule Integration.UnencryptTest do
         # Unencrypt
         {_output, 0} = GitTestHelper.run_unencrypt(repo_path)
 
-        # .gitattributes should be removed or have no gitveil patterns
+        # .gitattributes should be removed or have no gitfoil patterns
         if File.exists?(gitattributes_path) do
           content = File.read!(gitattributes_path)
-          refute content =~ "filter=gitveil", ".gitattributes should not contain gitveil patterns"
+          refute content =~ "filter=gitfoil", ".gitattributes should not contain gitfoil patterns"
         end
       after
         GitTestHelper.cleanup_test_repo(repo_path)
