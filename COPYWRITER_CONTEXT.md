@@ -105,7 +105,7 @@ Same file content → Same ciphertext (required for Git's content-addressable st
 Stored in `.gitfoil/master.key`:
 - Auto-gitignored (never committed)
 - Key loss = permanent data loss
-- Rotate with `git-foil re-encrypt`
+- Rotate with `git-foil rekey`
 - Enterprise: HSM/TPM integration coming
 
 ## Messaging Priorities

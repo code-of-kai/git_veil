@@ -12,7 +12,7 @@
 | `configure` | Yes | 2 | ✅ Complete |
 | `unencrypt` | Yes | 2 | ✅ Complete |
 | `encrypt` | Yes | 3 | ✅ Complete |
-| `re-encrypt` | Yes | 1 | ✅ Complete |
+| `rekey` | Yes | 1 | ✅ Complete |
 | `commit` | No | 0 | ✅ Complete |
 | `add-pattern` | No | 0 | ✅ Complete |
 | `remove-pattern` | No | 0 | ✅ Complete |
@@ -128,13 +128,13 @@ encrypt
 
 ---
 
-### 5. `git-foil re-encrypt` [1 fork, 4 paths]
+### 5. `git-foil rekey` [1 fork, 4 paths]
 
 ```
-re-encrypt
+rekey
 └─ "Choose (1 or 2) [1]:"
-   ├─ Enter/1 → Re-encrypt and stage
-   ├─ 2 → Re-encrypt only (don't stage)
+   ├─ Enter/1 → Rekey and stage
+   ├─ 2 → Rekey only (don't stage)
    └─ other → Error
 ```
 
@@ -222,7 +222,7 @@ help
 1. ✅ `init` - Initialize encryption
 2. ✅ `configure` - Configure patterns
 3. ✅ `encrypt` - Encrypt files
-4. ✅ `re-encrypt` - Re-encrypt files
+4. ✅ `rekey` - Rekey files
 5. ✅ `unencrypt` - Remove encryption
 6. ✅ `commit` - Commit .gitattributes
 7. ✅ `add-pattern` - Add pattern
@@ -258,5 +258,5 @@ Consider adding shortcuts:
 
 ### 3. Add safety confirmations
 Consider adding confirmations to:
-- `re-encrypt` (destructive operation)
+- `rekey` (destructive operation)
 - `remove-pattern` (if it's the last pattern)

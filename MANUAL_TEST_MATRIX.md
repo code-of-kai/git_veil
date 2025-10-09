@@ -123,13 +123,13 @@ This document maps every user choice, decision fork, and execution path in git-f
 
 ---
 
-## 5. `git-foil re-encrypt`
+## 5. `git-foil rekey`
 
-### Decision Fork 5.1: Re-encryption Options
+### Decision Fork 5.1: Rekey Options
 - Prompt: "Choose option (1 or 2) [1]:"
-  - **Path M1**: `Enter` → Re-encrypt and stage
-  - **Path M2**: `1` → Re-encrypt and stage
-  - **Path M3**: `2` → Re-encrypt only (don't stage)
+  - **Path M1**: `Enter` → Rekey and stage
+  - **Path M2**: `1` → Rekey and stage
+  - **Path M3**: `2` → Rekey only (don't stage)
   - **Path M4**: Any other → Error
 
 ---
@@ -201,7 +201,7 @@ This document maps every user choice, decision fork, and execution path in git-f
 2. ✅ **configure** - 8 paths (Forks 2.1-2.2)
 3. ✅ **unencrypt** - 5 paths (Forks 3.1-3.2)
 4. ✅ **encrypt** - 8 paths (Forks 4.1-4.3)
-5. ✅ **re-encrypt** - 4 paths (Fork 5.1)
+5. ✅ **rekey** - 4 paths (Fork 5.1)
 6. ✅ **commit** - 2 paths (No forks)
 7. ✅ **add-pattern** - 3 paths (No forks)
 8. ✅ **remove-pattern** - 3 paths (No forks)

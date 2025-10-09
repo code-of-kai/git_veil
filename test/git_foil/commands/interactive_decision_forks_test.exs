@@ -278,7 +278,7 @@ defmodule GitFoil.Commands.InteractiveDecisionForksTest do
       :ok
     end
 
-    test "Path M1: User presses Enter - Re-encrypt and stage (default)" do
+    test "Path M1: User presses Enter - Rekey and stage (default)" do
       MockTerminal.configure(inputs: [""])
 
       result = Rekey.run(terminal: MockTerminal)
@@ -286,7 +286,7 @@ defmodule GitFoil.Commands.InteractiveDecisionForksTest do
       assert match?({:ok, _}, result) or match?({:error, _}, result)
     end
 
-    test "Path M2: User enters '1' - Re-encrypt and stage" do
+    test "Path M2: User enters '1' - Rekey and stage" do
       MockTerminal.configure(inputs: ["1"])
 
       result = Rekey.run(terminal: MockTerminal)
@@ -294,7 +294,7 @@ defmodule GitFoil.Commands.InteractiveDecisionForksTest do
       assert match?({:ok, _}, result) or match?({:error, _}, result)
     end
 
-    test "Path M3: User enters '2' - Re-encrypt only (don't stage)" do
+    test "Path M3: User enters '2' - Rekey only (don't stage)" do
       MockTerminal.configure(inputs: ["2"])
 
       result = Rekey.run(terminal: MockTerminal)

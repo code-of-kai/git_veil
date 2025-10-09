@@ -60,7 +60,7 @@ Contains:
 - Path G4: User enters invalid input (treated as 'no')
 
 ### 3. `test/git_foil/commands/interactive_decision_forks_test.exs`
-**Purpose:** Tests for interactive commands (configure, encrypt, re-encrypt, unencrypt)
+**Purpose:** Tests for interactive commands (configure, encrypt, rekey, unencrypt)
 
 **Coverage: 25 tests covering 25 decision paths**
 
@@ -226,7 +226,7 @@ These are **integration tests** that:
 | configure | 2 | 8 | `interactive_decision_forks_test.exs` |
 | unencrypt | 2 | 5 | `interactive_decision_forks_test.exs` |
 | encrypt | 2 | 8 | `interactive_decision_forks_test.exs` |
-| re-encrypt | 1 | 4 | `interactive_decision_forks_test.exs` |
+| rekey | 1 | 4 | `interactive_decision_forks_test.exs` |
 | commit | 0 | 2 | `non_interactive_decision_forks_test.exs` |
 | add-pattern | 0 | 3 | `non_interactive_decision_forks_test.exs` |
 | remove-pattern | 0 | 3 | `non_interactive_decision_forks_test.exs` |
