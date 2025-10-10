@@ -1,24 +1,32 @@
 # GitFoil
 
-**Six layers of encryption because therapy is expensive.**
+Six layers of encryption because you're a little paranoid, you've accepted that, and you need to sleep at night.
 
-Quantum-resistant security that piggybacks on Git. You'll never think about it again.
+Quantum-resistant security that piggybacks on Git. Set it up once, then sleep soundly knowing it's so absurdly overbuilt that your paranoia finally shuts up.
 
- ![GitFoil Logo](docs/images/GitFoil.jpg)
+![GitFoil Logo](docs/images/GitFoil.jpg)
 
 ---
 
 ## The Problem
-Look, we both know you're paranoid.
-You're convinced AES-256 has a backdoor, aren't you? You read that Hacker News thread about quantum computers. You saw that leaked slide deck about agencies hoarding zero-days. You don't trust Microsoft with your code. You definitely don't trust that intern who keeps committing API keys.
-Are you being paranoid?
-Yes. Absolutely.
-Is it justified?
-Probably not.
-Are you going to do it anyway?
-Obviously. Wait. What are you going to do?
 
----
+Look, we both know you're paranoid.
+
+You're convinced AES-256 has a backdoor, aren't you? You read that Hacker News thread about quantum computers. You saw that leaked slide deck about agencies hoarding zero-days. You don't trust Microsoft with your code. You definitely don't trust that intern who keeps committing API keys.
+
+Are you being paranoid?
+
+Yes. Absolutely.
+
+Is it justified?
+
+Your therapist says no. History says maybe.
+
+So what now?
+
+Six layers of encryption, that's what.
+
+___
 
 ## The Solution (That Nobody Asked For)
 
@@ -102,19 +110,38 @@ But.
 
 But Ascon's only 128-bit. And I couldn't shake the feeling that 128 bits wasn't enough—especially for the quantum-resistant layer. So I added another 256-bit layer. And then, in what I can only describe as a series of poor decisions, I kept going.
 
+---
 
+## Brute Force vs. Actually Breaking It
 
-### 2. Algorithms Fail (This Part Is Actually Rational)
+**Brute force:** Try every possible key combination until one works.
+- With 704-bit post-quantum security, that's 2^704 attempts.
+- More operations than atoms in the universe.
+- Heat death of the sun comes first.
+- Not happening. Even with quantum computers.
+  - Grover's algorithm (the best quantum attack) cuts it to 2^352 operations.
+  - That's still 10^106 operations.
+  - For context: 2^128 is considered quantum-safe. This is 2^224 times harder than that.
+  - The universe will end. Your encryption won't break.
 
-History teaches us that cryptography ages like milk:
-- DES? Broken.
-- MD5? Broken.
-- SHA-1? Broken.
-- Your confidence in any single algorithm? Should be broken.
+**Algorithmic attack:** Find a mathematical weakness in the cipher itself.
+- Much more realistic threat.
+- This is how DES, MD5, and SHA-1 actually died.
+- Nobody brute-forced them—they found shortcuts.
 
-With one algorithm, you're betting everything on it never breaking.
+**GitFoil's approach:** If one algorithm breaks, you still have five others with completely different mathematical foundations. An attacker gets zero feedback about whether they succeeded. They just see more noise.
 
-With six algorithms:
+Look, brute force isn't the threat. Algorithmic weaknesses are. DES fell. MD5 fell. SHA-1 fell. They didn't get brute-forced—they had mathematical flaws nobody saw coming.
+
+So yeah, six layers sounds insane. And honestly? Most of this README has been making fun of how absurd it is.
+
+But this part? This part actually makes sense.
+
+When one cipher breaks, you've got five more. That's not paranoia—that's just learning from history.
+
+### The Math
+
+With six algorithms, an attacker needs to break ALL of them:
 
 ```
 P(break GitFoil) = P(break AES) × P(break AEGIS) × P(break Schwaemm)
@@ -127,13 +154,13 @@ If each has a 1% chance of catastrophic failure:
 
 That's one trillion times better odds.
 
-Is this mathematically sound? ¯\\\_(ツ)_/¯
+Is this mathematically sound? *Probably!*
 
 Are we overthinking this? *Definitely!*
 
 Are we doing it anyway? **Obviously.**
 
-### 3. Quantum Computers (Maybe)
+### 2. Quantum Computers (Maybe)
 
 **1,408-bit combined key space**  
 **704-bit post-quantum security**
@@ -150,11 +177,11 @@ Are we ready for the quantum apocalypse? Yes.
 
 Is the quantum apocalypse coming? ¯\\\_(ツ)_/¯
 
-### 4. Because It's Funny
+### 3. Because It's Funny
 
 Look, at some point you have to acknowledge the absurdity.
 
-Six layers of encryption for your `TODO.md` file is objectively hilarious.
+Six layers of encryption for your `TODO.md` file is objectively hilarious (and algorithmic attacks are a real threat).
 
 But also? It works. And it's fast. And it's automatic. And once it's set up, you never think about it again.
 
@@ -720,7 +747,7 @@ The shared key model means this is an all-or-nothing operation. If you need freq
 | Feature | GitFoil | git-crypt |
 |---------|---------|-----------|
 | Layers | 6 | 1 |
-| AES-256✅ | (plus 5 others)✅ |
+| AES-256 | ✅ (plus 5 others) | ✅ |
 | Origin story | Neurosis about 128-bit keys | Rational design |
 | Quantum resistance | 704-bit | 256-bit |
 | Absurdity | High | Low |
