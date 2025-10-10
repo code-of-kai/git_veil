@@ -281,11 +281,10 @@ Which is exactly the point.
 **Homebrew (macOS, easiest):**
 
 ```bash
-brew tap code-of-kai/gitfoil
-brew install git-foil
+brew install code-of-kai/gitfoil/git-foil
 ```
 
-That's it! Homebrew will automatically install Elixir and compile all the cryptographic libraries for your machine.
+That's it! One command. Homebrew will automatically install Elixir and compile all the cryptographic libraries for your machine.
 
 <details>
 <summary><strong>From source (any platform)</strong></summary>
