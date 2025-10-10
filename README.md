@@ -243,26 +243,66 @@ Which is exactly the point.
 
 ### You'll Need
 
-- Elixir 1.18+
-- Rust 1.70+
 - Git 2.0+
 - A healthy respect for paranoia
 
+That's it. No Rust, no Elixir, no build tools.
+
 ### Installation
 
-```bash
-# Clone it
-git clone https://github.com/yourusername/git-foil.git
-cd git-foil
+**Download a standalone binary** (no dependencies required):
 
-# Build it
-mix deps.get
-mix compile
-mix rustler.compile
-mix escript.build
+```bash
+# macOS (Apple Silicon)
+curl -L https://github.com/code-of-kai/git-foil/releases/download/v0.7.0/git_foil_macos_arm64 -o git-foil
+chmod +x git-foil
+sudo mv git-foil /usr/local/bin/
+
+# macOS (Intel)
+curl -L https://github.com/code-of-kai/git-foil/releases/download/v0.7.0/git_foil_macos_x86_64 -o git-foil
+chmod +x git-foil
+sudo mv git-foil /usr/local/bin/
+
+# Linux (x86_64)
+curl -L https://github.com/code-of-kai/git-foil/releases/download/v0.7.0/git_foil_linux_x86_64 -o git-foil
+chmod +x git-foil
+sudo mv git-foil /usr/local/bin/
+
+# Linux (ARM64)
+curl -L https://github.com/code-of-kai/git-foil/releases/download/v0.7.0/git_foil_linux_arm64 -o git-foil
+chmod +x git-foil
+sudo mv git-foil /usr/local/bin/
 ```
 
-This creates `./git-foil` - a standalone executable.
+That's it. Single file. Zero dependencies. The binary includes everything (Erlang runtime, Rust crypto NIFs, all libraries).
+
+<details>
+<summary><strong>Alternative: Build from source</strong></summary>
+
+If you prefer to build from source or need a different platform:
+
+**Requirements:**
+- Elixir 1.18+
+- Rust 1.70+
+- Zig 0.14.1 (for Burrito builds)
+
+```bash
+# Clone the repository
+git clone https://github.com/code-of-kai/git-foil.git
+cd git-foil
+
+# Install dependencies
+mix deps.get
+
+# Build standalone binary for your platform
+./build_release.sh
+
+# Binaries will be in burrito_out/
+# Copy to your PATH:
+sudo cp burrito_out/git_foil_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m) /usr/local/bin/git-foil
+```
+
+</details>
 
 ### Initialize Your Repo
 
@@ -756,7 +796,9 @@ If we ever decide we need a seventh layer, the architecture will support it.
 - 5 Rust NIFs for crypto
 - 18 integration tests
 - 85+ seconds of real Git operations in tests
-- Zero runtime dependencies
+- **Zero runtime dependencies** (Burrito standalone binaries with embedded ERTS)
+- Single-file executables (~10-16MB)
+- 4 platforms supported (macOS ARM64/x86_64, Linux x86_64/ARM64)
 - 4 layers that exist because of questionable decision-making
 - 100% concentrated over-engineering
 
@@ -805,6 +847,7 @@ Built on the shoulders of giants (who used more reasonable numbers of layers):
 
 - **Elixir/Erlang** - Because concurrency is nice
 - **Rust** - Because memory safety is nice
+- **Burrito** - Because standalone binaries are nice
 - **NIST/CAESAR competitions** - Because vetted crypto is nice
 - **Kyber1024** - Post-quantum key encapsulation
 - **Coffee** - Because building this was ridiculous
