@@ -718,29 +718,11 @@ The shared key model means this is an all-or-nothing operation. If you need freq
 | Feature | GitFoil | git-crypt |
 |---------|---------|-----------|
 | Layers | 6 | 1 |
+| AES-256✅ | (plus 5 others)✅ |
 | Origin story | Neurosis about 128-bit keys | Rational design |
-| Quantum resistance | 704-bit | 128-bit |
+| Quantum resistance | 704-bit | 256-bit |
 | Absurdity | High | Low |
 | Actually works | ✅ | ✅ |
-
-### vs. git-secret
-
-| Feature | GitFoil | git-secret |
-|---------|---------|-----------|
-| Layers | 6 (was gonna be 2) | 1 |
-| Workflow | Automatic | Manual commands |
-| Team setup | Shared key file | GPG keys per user |
-| Access revocation | Hard (rekey everything) | Easy (remove GPG key) |
-| Complexity | Low (High paranoia) | High |
-
-### vs. transcrypt
-
-| Feature | GitFoil | transcrypt |
-|---------|---------|-----------|
-| Layers | 6 | 1 |
-| Implementation | Elixir + Rust | Bash scripts |
-| Quantum prep | ✅ Ready | ❌ Not ready |
-| Makes you question things | ✅ | ❌ |
 
 ---
 
@@ -795,12 +777,11 @@ If we ever decide we need a seventh layer, the architecture will support it.
 - ~6,800 lines of Elixir
 - 5 Rust NIFs for crypto
 - 18 integration tests
-- 85+ seconds of real Git operations in tests
+- Real Git operations in tests
 - **Zero runtime dependencies** (Burrito standalone binaries with embedded ERTS)
 - Single-file executables (~10-16MB)
 - 4 platforms supported (macOS ARM64/x86_64, Linux x86_64/ARM64)
-- 4 layers that exist because of questionable decision-making
-- 100% concentrated over-engineering
+- 6-layer encryption that exist because of questionable decision-making
 
 ---
 
