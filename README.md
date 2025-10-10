@@ -1,252 +1,537 @@
 # GitFoil
 
-**Six layers of encryption. Zero extra steps.**
+**Six layers of encryption because one was 128-bit and felt inadequate.**
 
-Quantum-resistant security that piggybacks on Git. Invisibly.
+Quantum-resistant security that piggybacks on Git. You'll never think about it again.
 
 ---
 
 ## The Problem
 
-You're paranoid about encryption. Good.
+Look, we need to talk about your threat model.
 
-You don't know if AES will break. You don't even know what AES is. You don't know if quantum computers will crack your repos in 10 years. You don't know which three-letter agency has a secret algorithm that makes today's encryption look like a joke.
+You're worried AES-256 might have a backdoor. You read that Hacker News thread about quantum computers. You saw that thing about the NSA hoarding zero-days. You don't trust Microsoft with your code. You *definitely* don't trust that intern who keeps committing API keys.
 
-You worry that some random Microsoft employee could read your code.
+Are you being paranoid?
 
-**You just want maximum encryption so you stop thinking about it.**
+**Yes. Absolutely.**
 
-One algorithm? You'll lie awake wondering if it has a flaw.
-Two algorithms? Still feel exposed.
-Six different algorithms, six separate keys, zero information leakage?
+Is it justified?
 
-**Now you can sleep.**
+**Probably not.**
 
-Git remembers everything forever. Secrets leak. Keys get committed. That intern pushed credentials again.
+Are you going to do it anyway?
 
-Encryption tools exist. But they break your workflow. Extra commands. Manual steps. Things you'll skip when you're rushing.
+**Obviously.**
 
-You need security that doesn't require discipline.
+---
+
+## The Solution (That Nobody Asked For)
+
+What if we just... kept encrypting?
+
+Like, what if we encrypted it. Then encrypted *that*. Then did it four more times.
+
+With six completely different algorithms. Six separate keys. So that breaking one gives you... the next layer of indecipherable noise.
+
+Would that be overkill?
+
+Yes.
+
+Would it be *absurdly* overkill?
+
+Also yes.
+
+Would you sleep better at night knowing your `database.env` file is wrapped in 1,408 bits of cascading cryptographic fury?
+
+**Finally, yes.**
 
 ---
 
 ## What GitFoil Does
 
-Encrypts your entire repository with **six independent algorithms**.
+Wraps your Git repository in six layers of military-grade™ encryption.
 
-Set it up once. Then it vanishes.
+Then hides in your Git workflow so you never think about it again.
 
 ```bash
 git add .
-git commit -m "feature: new auth system"
+git commit -m "feature: auth system that definitely won't leak"
 git push
 ```
 
-No extra commands. No ceremony. Just Git.
+That's it. No extra commands. No ceremony. No remembering to encrypt things.
 
-Your files go in encrypted. They come out decrypted. Everything in between is ciphertext.
+Your files go in encrypted. They come out decrypted. Everything in between is beautiful, glorious ciphertext that would make a cryptographer weep.
 
----
-
-## How It Works
-
-### Six layers. Six algorithms. Six separate keys.
-
-```
-Your Files
-    ↓
-AES-256-GCM          ← NIST standard, 24 years battle-tested
-    ↓
-AEGIS-256            ← CAESAR winner, ultra-fast
-    ↓
-Schwaemm256-256      ← NIST finalist, quantum-resistant sponge
-    ↓
-Deoxys-II-256        ← CAESAR winner, tweakable cipher
-    ↓
-Ascon-128a           ← NIST winner, quantum-resistant
-    ↓
-ChaCha20-Poly1305    ← IETF standard, Google-designed
-    ↓
-Git Repository
-```
-
-Each layer uses authenticated encryption. Each layer gets a unique key derived from your master password.
-
-**The twist:** Breaking one layer gives zero feedback.
-
-Crack Layer 6? You get Layer 5 ciphertext. It looks identical to garbage. You can't tell if you succeeded.
-
-It's like a safe with six locks. No click when one opens. Only silence until all six yield.
+Or laugh. Probably laugh.
 
 ---
 
-## Why Six Layers
+## The Encryption Stack (Yes, Really)
 
-### 1. All-or-Nothing Security
+```
+Your Precious Secrets
+    ↓
+AES-256-GCM          ← The classic. NIST-approved. Boring. Reliable.
+    ↓
+AEGIS-256            ← Won a competition. Very fast. Sounds cool.
+    ↓
+Schwaemm256-256      ← Impossible to pronounce. Quantum-resistant.
+    ↓
+Deoxys-II-256        ← Another competition winner. We're very thorough.
+    ↓
+Ascon-128a           ← NIST's 2023 pick for the quantum apocalypse.
+    ↓
+ChaCha20-Poly1305    ← Does the encryption cha-cha-cha. Takes two to tango, six to secure.
+    ↓
+Your Git Repository (Now Completely Unreadable)
+```
 
-Attack one algorithm. Get noise.
-Attack two algorithms. Get noise.
-Attack five algorithms. Still noise.
-Attack all six. Then maybe you have a chance.
+Each layer uses authenticated encryption. Each layer gets its own key derived from your master key.
 
-**Zero information leakage between layers.**
+**Here's the beautiful part:** If someone breaks Layer 6, they get Layer 5 ciphertext. Which looks identical to garbage. They can't tell if they succeeded. It's like a safe where no lock clicks. Just silence until all six yield.
 
-### 2. Multiplicative Protection
+(Spoiler: All six aren't yielding.)
 
-Algorithms fail. History proves it. DES fell. MD5 fell. SHA-1 fell.
+---
 
-With one algorithm, you bet everything on it never breaking.
+## Why Six Layers (A Reasonable Question)
 
-With six:
+### 1. Honestly? Neurosis.
+
+Started with two layers. One of them was Ascon-128a for quantum resistance. Great algorithm. NIST winner. Future-proof.
+
+But it's 128-bit.
+
+And that *bothered* me.
+
+I mean, AES-256 exists. We have 256-bit algorithms. Why was I okay with 128 bits in my quantum-resistant layer? What if that's the weak link? What if I'm leaving 128 bits of vulnerability?
+
+So I added another 256-bit layer.
+
+Then I thought, well, if I'm adding one more, why not add two more?
+
+And then, you know, might as well make it six.
+
+### 2. Algorithms Fail (This Part Is Actually Rational)
+
+History teaches us that cryptography ages like milk:
+- DES? Broken.
+- MD5? Broken.
+- SHA-1? Broken.
+- Your confidence in any single algorithm? Should be broken.
+
+With one algorithm, you're betting everything on it never breaking.
+
+With six algorithms:
 
 ```
 P(break GitFoil) = P(break AES) × P(break AEGIS) × P(break Schwaemm)
                    × P(break Deoxys) × P(break Ascon) × P(break ChaCha20)
 ```
 
-If each has a 1% chance of a critical flaw:
+If each has a 1% chance of catastrophic failure:
 - One algorithm: **1% risk**
 - Six algorithms: **0.000000000001% risk**
 
-**That's 1 trillion times better odds.**
+That's one trillion times better odds.
 
-### 3. Maximum Quantum Resistance
+Is this mathematically sound? *Probably!*
 
-**1,408-bit combined key space**
-**704-bit post-quantum security** (after Grover's algorithm)
+Are we overthinking this? *Definitely!*
+
+Are we doing it anyway? **Obviously.**
+
+### 3. Quantum Computers (Maybe)
+
+**1,408-bit combined key space**  
+**704-bit post-quantum security**
 
 That's **5.5× stronger** than AES-256 alone against quantum computers.
 
-Two algorithms (Ascon-128a and Schwaemm256-256) are **explicitly designed for post-quantum security**. They won NIST's Lightweight Cryptography competition in 2023.
+Will quantum computers break modern encryption in your lifetime? Unknown.
 
-**Your encrypted data today won't be readable tomorrow.** Even when quantum computers arrive.
+Will you sleep better knowing you have 704-bit post-quantum security? Absolutely.
 
-### 4. File Isolation
+Two of our algorithms (Ascon-128a and Schwaemm256-256) literally won NIST's competition for post-quantum lightweight cryptography.
 
-Each file gets unique keys derived from its path.
+Are we ready for the quantum apocalypse? Yes.
 
-```
-database.env     → Key Set A (6 independent keys)
-api_keys.json    → Key Set B (6 independent keys)
-secrets.yaml     → Key Set C (6 independent keys)
-```
+Is the quantum apocalypse coming? ¯\\\_(ツ)_/¯
 
-Crack one file. The others stay locked.
+### 4. Because It's Funny
+
+Look, at some point you have to acknowledge the absurdity.
+
+Six layers of encryption for your `TODO.md` file is objectively hilarious.
+
+But also? It works. And it's fast. And it's automatic. And once it's set up, you never think about it again.
+
+So why not?
 
 ---
 
-## Technical Specifications
+## Technical Specs (For the Nerds)
 
-### Encryption Stack
+### The Stack
 
-| Layer | Algorithm | Key Size | Tag Size | Type | Competition |
-|-------|-----------|----------|----------|------|-------------|
-| 1 | AES-256-GCM | 256-bit | 128-bit | Block cipher | NIST standard |
-| 2 | AEGIS-256 | 256-bit | 256-bit | AES-based AEAD | CAESAR winner |
-| 3 | Schwaemm256-256 | 256-bit | 256-bit | Sponge (Sparkle) | NIST LWC finalist |
-| 4 | Deoxys-II-256 | 256-bit | 128-bit | Tweakable block | CAESAR winner |
-| 5 | Ascon-128a | 128-bit | 128-bit | Sponge (Ascon) | **NIST LWC winner** |
-| 6 | ChaCha20-Poly1305 | 256-bit | 128-bit | Stream cipher | IETF standard |
+| Layer | Algorithm | Key | Type | Pedigree |
+|-------|-----------|-----|------|----------|
+| 1 | AES-256-GCM | 256-bit | Block cipher | NIST standard since 2001 |
+| 2 | AEGIS-256 | 256-bit | AES-based AEAD | CAESAR winner |
+| 3 | Schwaemm256-256 | 256-bit | Sponge | NIST finalist |
+| 4 | Deoxys-II-256 | 256-bit | Tweakable block | CAESAR winner |
+| 5 | Ascon-128a | 128-bit | Sponge | **NIST winner (2023)** |
+| 6 | ChaCha20-Poly1305 | 256-bit | Stream cipher | IETF standard |
 
-**Total:** 1,408-bit key space → **704-bit post-quantum security**
+**Total combined key space:** 1,408 bits  
+**Post-quantum security:** 704 bits (after Grover's algorithm)  
+**Layers added due to questionable decision-making:** 4
+
+All algorithms are competition winners or IETF/NIST standards. We didn't just pick random ciphers. Though we did pick more of them than strictly necessary.
 
 ### Key Derivation
 
-- **Master key:** 256-bit derived via Argon2id from password
+- **Master keypair:** Kyber1024 (post-quantum) + classical random keys
+- **Master key:** SHA-512(classical_secret || pq_secret)[0..31]
 - **File keys:** HKDF-SHA3-512 with path-based salts
 - **Per-layer keys:** Independent derivation using unique context strings
-- **IV/Nonce generation:** Deterministic SHA3-256 from key + layer number
-- **Authentication:** AEAD (Authenticated Encryption with Associated Data) on every layer
+- **IV/Nonce:** Deterministic SHA3-256 (required for Git's deterministic model)
+- **Authentication:** AEAD on every single layer
 
 ### Security Properties
 
-✅ **Deterministic encryption** - Same file → same ciphertext (required for Git)
-✅ **Authenticated encryption** - Tampering detection on all 6 layers
-✅ **Algorithm diversity** - 6 different mathematical primitives
-✅ **Competition-vetted** - All algorithms are CAESAR/NIST winners or IETF standards
-✅ **No-feedback property** - Breaking N-1 layers reveals nothing
-✅ **Quantum-resistant** - 704-bit post-quantum security via Grover's algorithm
-✅ **Side-channel resistant** - Constant-time implementations in Rust NIFs
-✅ **File isolation** - Per-file key derivation prevents cross-file attacks
+✅ Deterministic encryption (same file → same ciphertext, for Git compatibility)  
+✅ Authenticated encryption (tampering detection on all layers)  
+✅ Algorithm diversity (six different mathematical approaches)  
+✅ Competition-vetted (every algorithm won something)  
+✅ No-feedback property (breaking N-1 layers reveals nothing)  
+✅ Quantum-resistant (Kyber1024 keypair + two post-quantum algorithms)  
+✅ Side-channel resistant (constant-time Rust implementations)  
+✅ File isolation (per-file key derivation prevents cross-file attacks)  
+✅ Probably overcompensating (but functional)
+
+### Security Limitations
+
+⚠️ **Master key stored unencrypted** - The `.git/git_foil/master.key` file is stored as plaintext binary on disk, protected only by filesystem permissions (0600). If someone gets filesystem access to your machine, they can read your keys.
+
+⚠️ **No password protection** - Unlike SSH keys with passphrases, the master key has no additional encryption layer. Full disk encryption is your only protection against laptop theft.
+
+⚠️ **Shared key model** - All team members use the same master key file. Can't revoke individual team member access without re-keying the entire repository.
+
+**Think of it like SSH keys:** They're also unencrypted files protected by filesystem permissions. GitFoil's security model assumes you trust your local filesystem and use disk encryption.
 
 ---
 
 ## Performance
 
-### Blazingly Fast
+### Surprisingly Fast
 
-Built in Elixir with **Rust NIFs** (Native Implemented Functions) for cryptographic primitives.
+Built in Elixir with **Rust NIFs** for the actual crypto.
 
-**On a modern laptop:**
-- Encrypt 1,000 files: **~2 seconds**
-- Decrypt 1,000 files: **~2 seconds**
-- Throughput: **~100-200 MB/s** per file
+**On a laptop:**
+- Encrypt 1,000 files: ~2 seconds
+- Decrypt 1,000 files: ~2 seconds
+- Throughput: ~100-200 MB/s per file
 
-### Concurrent Processing
+Yes, even with six layers. Turns out when you're neurotic about security, you're also neurotic about performance.
 
-GitFoil automatically detects your CPU cores and encrypts files in parallel:
+### It Just Works™
 
-- **Concurrent encryption** during `git add`
-- **Intelligent batching** with back-pressure control
-- **Progress bars** for large file sets
-- **Retry logic** for Git index lock contention
+- Automatic CPU core detection
+- Parallel encryption during `git add`
+- Progress bars for large repos
+- Intelligent batching with back-pressure
+- Retry logic for Git lock contention
 
-Encryption happens in Git's clean filter. Decryption in the smudge filter.
+You won't notice it happening.
 
-**You won't notice it.**
+Which is exactly the point.
 
 ---
 
 ## Setup
 
-### Requirements
+### You'll Need
 
-- **Elixir 1.18+** (Mix build tool)
-- **Rust 1.70+** (for compiling native crypto modules)
-- **Git 2.0+**
+- Elixir 1.18+
+- Rust 1.70+
+- Git 2.0+
+- A healthy respect for paranoia
 
 ### Installation
 
 ```bash
-# Clone repository
+# Clone it
 git clone https://github.com/yourusername/git-foil.git
 cd git-foil
 
-# Install dependencies and compile
+# Build it
 mix deps.get
 mix compile
-
-# Build native crypto modules (Rust NIFs)
 mix rustler.compile
-
-# Build CLI binary
 mix escript.build
 ```
 
 This creates `./git-foil` - a standalone executable.
 
-### Initialize Your Repository
+### Initialize Your Repo
 
 ```bash
-# Navigate to your repo
-cd /path/to/your/repo
+cd /path/to/your/precious/repo
 
-# Initialize GitFoil
 /path/to/git-foil init
 
-# Enter master password (32+ characters recommended)
-# GitFoil sets up Git filters automatically
+# No password required - generates random quantum-resistant keys
+# Keys stored in .git/git_foil/master.key
 ```
 
-**That's it.** GitFoil hooks into Git. You never run `git-foil` again.
+That's it. GitFoil hooks into Git's filter system and vanishes.
 
-### What Happens During Init
+### What Just Happened?
 
-1. Derives 256-bit master key from your password using Argon2id
-2. Stores encrypted keypair in `.gitfoil/` directory
-3. Configures Git clean/smudge filters for encryption/decryption
-4. Prompts you to select files to encrypt (patterns like `*.env`, `secrets/`)
-5. Updates `.gitattributes` to mark encrypted files
+1. Generated a cryptographically random keypair (Kyber1024 + classical keys)
+2. Derived master encryption key via SHA-512
+3. Stored keypair in `.git/git_foil/master.key` (permissions: 0600)
+4. Set up Git clean/smudge filters
+5. Prompted you to select files to encrypt
+6. Updated `.gitattributes`
+
+Now every time you `git add`, files get encrypted.  
+Every time you `git checkout`, files get decrypted.
+
+**You never run `git-foil` again.** (Well, almost never - see below.)
+
+### Key Storage
+
+- **Location:** `.git/git_foil/master.key`
+- **Format:** Binary keypair (Kyber1024 + classical)
+- **Permissions:** 0600 (owner read/write only)
+- **Security:** Protected by filesystem permissions only
+- **Important:** Back up this file! Without it, you cannot decrypt your files.
+
+---
+
+## Understanding What Gets Encrypted (Important!)
+
+Let's be clear about what GitFoil does and doesn't protect:
+
+### Your Working Directory: Unencrypted
+
+**The files on your computer remain in plain text.**
+
+When you're working on your code, editing `secrets.env` or `api_keys.json`, those files are completely readable on your local machine. You can open them in your editor, grep them, back them up—they're just normal files.
+
+GitFoil doesn't encrypt your working directory. It encrypts what gets stored in Git.
+
+### What Gets Encrypted: Git Objects
+
+When you run `git add` and `git commit`, GitFoil kicks in. It encrypts the file contents before they're stored in Git's internal object database (the `.git` directory). Then when you `git push`, those encrypted Git objects go to GitHub/GitLab/wherever.
+
+**What GitHub sees:** Ciphertext. Six layers of indecipherable noise.
+
+**What you see on your computer:** Your actual code, readable and editable.
+
+### This Means Two Things
+
+**Good news:** If something happens to your remote repo, your local files are fine. They're right there, unencrypted, ready to use. You can back them up, copy them, whatever you want.
+
+**Your responsibility:** Securing your local machine is *your* problem. GitFoil protects your code from GitHub breaches, nosy employees, and government data requests. It doesn't protect your laptop from theft or your hard drive from failure.
+
+**Use full disk encryption.** FileVault on Mac, BitLocker on Windows, LUKS on Linux. GitFoil protects your *remote* repos. Disk encryption protects your *local* files and keys.
+
+**Backup your local files and keys.** GitFoil solves the "external repo security" problem. It doesn't solve the "my laptop died" problem. That's a different problem. Handle it accordingly.
+
+---
+
+## Setting Up On a New Machine
+
+Got a new laptop? Cloning the repo to a new workstation? Here's what to do:
+
+### The Key Insight
+
+GitFoil uses a **shared secret model**. You need the `master.key` file from your original setup. Think of it like an SSH private key - you generate it once, then copy it to any machine where you need access.
+
+### Step 1: Back Up Your Key (On Old Machine)
+
+Before you need it, back up your master key:
+
+```bash
+cd /path/to/repo
+
+# Export your master key
+cp .git/git_foil/master.key ~/master-key-backup.bin
+
+# Store it securely:
+# - Encrypted USB drive
+# - Password manager (as secure file attachment)
+# - GPG-encrypted: gpg --encrypt --recipient your@email.com master-key-backup.bin
+# - Encrypted cloud storage (NOT plaintext Dropbox!)
+```
+
+**DO NOT:**
+- ❌ Email the key unencrypted
+- ❌ Commit it to the repository
+- ❌ Store it in plaintext on cloud storage
+- ❌ Share it via Slack/Discord without encryption
+
+### Step 2: Clone the Repo (On New Machine)
+
+```bash
+git clone https://github.com/your-org/your-repo.git
+cd your-repo
+```
+
+At this point, if you try to check out encrypted files, Git will fail because the filters aren't set up.
+
+### Step 3: Restore Your Key
+
+```bash
+# Create the directory
+mkdir -p .git/git_foil
+
+# Copy your backed-up master key
+cp ~/master-key-backup.bin .git/git_foil/master.key
+
+# Set correct permissions
+chmod 600 .git/git_foil/master.key
+```
+
+### Step 4: Initialize GitFoil
+
+```bash
+# This sets up the Git filters and detects the existing key
+git-foil init
+
+# Since master.key already exists, it won't generate a new one
+# It just configures the Git filters
+```
+
+### Step 5: Refresh Your Working Directory
+
+```bash
+# Force Git to re-run the smudge filter on all files
+git reset --hard HEAD
+```
+
+Your encrypted files decrypt and appear as plain text in your working directory.
+
+**That's it.** You're ready to work.
+
+### Important Notes
+
+- The `master.key` file is the same cryptographic key you use on all your machines
+- Same key = same decrypted files
+- Back up this key file somewhere secure (encrypted password manager, GPG-encrypted backup, etc.)
+- If you lose the key, your encrypted data is unrecoverable
+
+---
+
+## Team Usage
+
+### How Team Encryption Works
+
+GitFoil uses a **shared key model** for teams. Think of it like a shared password manager vault - everyone has the same master key.
+
+**One master key file.** Everyone copies it to their local `.git/git_foil/` directory. Everyone can encrypt and decrypt with the same keys.
+
+### Initial Setup (Team Lead)
+
+1. **One person** initializes GitFoil:
+   ```bash
+   cd /path/to/team/repo
+   git-foil init
+   
+   # Selects files to encrypt
+   git add .gitattributes
+   git commit -m "Add GitFoil encryption"
+   git push
+   ```
+
+2. **Export the master key** for sharing:
+   ```bash
+   cp .git/git_foil/master.key ~/team-master-key.bin
+   ```
+
+3. **Share it securely** with team members:
+
+   **Good options:**
+   - **GPG-encrypt it:**
+     ```bash
+     gpg --encrypt --recipient teammate@email.com team-master-key.bin
+     # Send the .gpg file via any channel
+     ```
+   
+   - **Password manager:** Upload to 1Password shared vault, Bitwarden organization, LastPass shared folder
+   
+   - **Encrypted file transfer:** Magic Wormhole (`wormhole send`), Keybase, Signal file attachment
+   
+   - **In-person:** USB drive, local network over SSH
+
+### Team Member Setup
+
+Each team member receiving the key:
+
+```bash
+# 1. Clone the repo
+git clone https://github.com/your-org/your-repo.git
+cd your-repo
+
+# 2. Receive the master key file (via secure channel above)
+#    Decrypt if necessary: gpg --decrypt team-master-key.bin.gpg > team-master-key.bin
+
+# 3. Place the key
+mkdir -p .git/git_foil
+cp ~/team-master-key.bin .git/git_foil/master.key
+chmod 600 .git/git_foil/master.key
+
+# 4. Initialize GitFoil (sets up filters, doesn't generate new key)
+git-foil init
+
+# 5. Refresh working directory
+git reset --hard HEAD
+```
+
+### Daily Team Workflow
+
+Everyone works normally:
+
+```bash
+git pull    # Auto-decrypts incoming changes
+git add .
+git commit -m "Add feature"
+git push    # Auto-encrypts outgoing changes
+```
+
+The six layers happen automatically. Nobody thinks about it.
+
+### What's Shared
+
+✅ **The same `master.key` file** - copied to each team member's local `.git/git_foil/` directory  
+✅ **The same encryption keys** - everyone can decrypt each other's commits  
+✅ **The `.gitattributes` file** - defines which files are encrypted (committed to repo)
+
+❌ **NOT shared via Git** - the `master.key` file itself (never committed, always stays local)
+
+### Team Security Considerations
+
+**Single shared key means:**
+- ✅ Simple setup - just copy one file
+- ✅ Everyone has access - easy collaboration
+- ❌ Can't revoke individual team members - if someone leaves, you'd need to generate a new key and re-encrypt everything
+- ❌ No per-user audit trail - can't tell who encrypted/decrypted files
+- ❌ One compromised laptop = entire team must rotate keys
+
+**This is fine for:**
+- Small trusted teams
+- Teams with stable membership
+- Internal projects with trusted collaborators
+
+**This is NOT ideal for:**
+- Large teams with frequent turnover
+- Projects requiring per-user access control
+- Situations requiring individual revocation
 
 ---
 
@@ -255,20 +540,32 @@ cd /path/to/your/repo
 ### Daily Workflow
 
 ```bash
-# Everything is normal Git
 git add .
-git commit -m "Add new features"
+git commit -m "Add the secrets"
 git push
-
-# Files are encrypted in the commit
-# Files are decrypted in your working directory
-# You never think about it
 ```
 
-### Managing Encrypted Patterns
+That's it. The six layers happen automatically.
+
+Files are encrypted in commits. Files stay decrypted in your working directory. You never think about it.
+
+### Core Commands
 
 ```bash
-# Add files to encryption
+# Initialize GitFoil in a repo (one-time setup)
+git-foil init
+
+# Check current configuration
+git-foil config
+
+# See which files are encrypted
+git-foil status
+```
+
+### Managing What Gets Encrypted
+
+```bash
+# Add patterns to encrypt
 git-foil pattern add "*.env"
 git-foil pattern add "secrets/**/*"
 
@@ -279,255 +576,290 @@ git-foil pattern list
 git-foil pattern remove "*.env"
 ```
 
-### Rekeying Files
-
-If you need to rotate keys or refresh encryption after pattern changes:
+### Advanced Operations
 
 ```bash
+# Unencrypt all files (removes GitFoil entirely)
+git-foil unencrypt
+
+# Re-encrypt with the same master key
+# (Useful after changing encryption patterns)
+git-foil recrypt
+
+# Generate a new master key and re-encrypt everything
+# (Useful when team member leaves or key is compromised)
 git-foil rekey
 ```
 
-This rekeys all marked files (generates new keys or reuses existing ones).
+These commands exist so you're never locked in. Don't like GitFoil anymore? Run `unencrypt` and it's gone. Want to change your patterns? Run `recrypt`. Need a fresh master key? Run `rekey`.
 
-### Checking Status
-
-```bash
-# Check which files are encrypted
-git-foil status
-```
-
----
-
-## Team Usage
-
-### Setup for Teams
-
-1. **Share the master password once.** Use a secure channel (password manager, encrypted message).
-2. **Each team member runs:**
-   ```bash
-   git clone https://github.com/your-org/your-repo.git
-   cd your-repo
-   git-foil init
-   # Enter the shared master password
-   ```
-
-3. **Everyone works normally:**
-   ```bash
-   git pull   # Decrypts incoming changes
-   git add .
-   git commit
-   git push   # Encrypts outgoing changes
-   ```
-
-### What's Encrypted
-
-✅ File contents in Git commits
-✅ File contents in Git remotes (GitHub, GitLab, etc.)
-✅ File contents in Git history
-
-### What's NOT Encrypted
-
-❌ File names (Git doesn't support encrypted filenames)
-❌ Directory structure
-❌ Commit messages
-❌ File metadata (timestamps, permissions)
-
-**Keys never touch the repository. Keys never touch GitHub.**
-
----
-
-## Advanced Features
-
-### Hexagonal Architecture
-
-GitFoil uses clean hexagonal (ports & adapters) architecture:
-
-- **Core domain:** Pure business logic (encryption, key derivation)
-- **Ports:** Abstract interfaces (CryptoProvider, KeyStorage, Repository)
-- **Adapters:** Concrete implementations (Rust NIFs, Git CLI, file system)
-
-This design makes GitFoil:
-- **Testable:** Mock all external dependencies
-- **Maintainable:** Swap crypto libraries without touching core logic
-- **Extensible:** Add new algorithms by implementing the CryptoProvider port
-
-### Wire Format
-
-Each encrypted file has this structure:
-
-```
-[version:1 byte][tag1:16][tag2:32][tag3:32][tag4:16][tag5:16][tag6:16][ciphertext:N bytes]
-```
-
-- **Version byte:** Format version (currently `3`)
-- **Tags:** Authentication tags from each layer
-- **Ciphertext:** Final encrypted data
-
-**Total overhead:** 129 bytes per file
-
-### Native Performance
-
-Five cryptographic primitives implemented as Rust NIFs:
-
-- `native/ascon_nif/` - Ascon-128a (NIST winner)
-- `native/aegis_nif/` - AEGIS-256 (CAESAR winner)
-- `native/schwaemm_nif/` - Schwaemm256-256 (NIST finalist)
-- `native/deoxys_nif/` - Deoxys-II-256 (CAESAR winner)
-- `native/chacha20poly1305_nif/` - ChaCha20-Poly1305 (IETF standard)
-
-AES-256-GCM uses Erlang's built-in `:crypto` module (OpenSSL).
-
-**Why Rust NIFs?**
-- **Speed:** Native code performance (~100-200 MB/s)
-- **Safety:** Rust's memory safety prevents vulnerabilities
-- **Concurrency:** NIFs run in parallel across CPU cores
-- **Side-channel resistance:** Constant-time implementations
+**You're always in control.**
 
 ---
 
 ## FAQ
 
-**Does this protect against GitHub breaches?**
-Yes. GitHub sees only ciphertext. Useless without your 6-layer keys.
+**Isn't this overkill?**  
+Yes. Started as two layers. Ended as six. These things happen.
 
-**What if I forget my password?**
-Your data is unrecoverable. That's the point. Store your password in a password manager.
+**Did you really add four extra layers because one was 128-bit?**  
+Look, we all have our processes.
 
-**Can I use this with GitHub Actions / CI/CD?**
-Yes. Store your master password in CI secrets. Run `git-foil init` in your CI pipeline with the password via environment variable.
+**Was it because one was a tiny 128-bit and felt inadequate?**  
+...Hey! That's none of your business!
 
-**Does this slow down Git?**
-Barely. Encryption adds ~2 seconds for 1,000 files. Most repos have far fewer files in each commit.
+**Does this protect against GitHub employees reading my code?**  
+Yes. They see ciphertext. Six layers of ciphertext. Useless without your master key file.
 
-**Is this overkill?**
-Depends. If your repo has secrets, API keys, credentials, or sensitive data, this is exactly enough security. If it's a public open-source library, you probably don't need this.
+**What about laptop theft?**  
+GitFoil doesn't protect against that. Your `master.key` file is unencrypted on disk (like an SSH private key). Use full disk encryption (FileVault, BitLocker, LUKS) to protect local data and keys.
 
-**Why six layers instead of three?**
-- **1,408-bit key space** (vs 640-bit with 3 layers)
-- **704-bit post-quantum security** (vs 320-bit)
-- **More algorithm diversity** (6 vs 3 mathematical primitives)
-- **Stronger multiplicative protection** (must break ALL 6 algorithms)
-- **Negligible performance cost** (still ~2 seconds for 1,000 files)
+**What if I lose my master key?**  
+Your encrypted data in the Git repository is unrecoverable. That's not a bug, it's a feature.
 
-**Can quantum computers break this?**
-Not with current or near-future technology. 704-bit post-quantum security means:
-- A quantum computer needs **2^704 operations** to brute-force
-- That's **10^212 operations** - more than the number of atoms in the observable universe
-- Two algorithms (Ascon, Schwaemm) are explicitly designed to resist quantum attacks
+But here's the important part: **your working directory files are still there, unencrypted, on your computer.** They're just regular files. You haven't lost your code, you've just lost the ability to decrypt what's in your Git history and remote repo.
 
-**What happens if one algorithm is broken?**
-You still have five others. An attacker gets the next layer's ciphertext, which is indistinguishable from random noise. No information leakage. No feedback. They must break ALL six algorithms.
+If this happens, you can:
+1. Keep working with your local unencrypted files (they're fine)
+2. Run `git-foil rekey` to generate a new master key
+3. Re-encrypt everything with the new key
+4. Store the new key somewhere safe this time, you naughty boy
 
----
+**But don't rely on this as a backup strategy.** Back up your `master.key` file properly:
+- Store it in a password manager (1Password, Bitwarden, etc.)
+- Keep an encrypted backup (GPG-encrypted on a USB drive)
+- Treat it like you'd treat your SSH private keys
 
-## Project Statistics
+Here's the thing: **your biggest threat is yourself.** You're way more likely to lose your master key than you are to have some three-letter agency break into your repo to steal your Slack clone or todo app.
 
-- **~6,800 lines** of Elixir code
-- **5 Rust NIFs** for cryptographic primitives
-- **18 integration tests** with 85+ seconds of real Git operations
-- **Hexagonal architecture** with ports & adapters pattern
-- **Zero runtime dependencies** (compiled to standalone escript)
+The NSA doesn't care about your code. But you will care if you lose your key and have to rekey everything.
+
+**Will quantum computers break this?**  
+Not with current or near-future technology. You'd need 2^704 operations. That's more than the number of atoms in the observable universe. You're fine.
+
+**What if one algorithm gets broken?**  
+You still have five others. The attacker gets the next layer's ciphertext, which is indistinguishable from random noise. They get zero feedback. They must break ALL six.
+
+**Is this actually secure or just security theater?**  
+It's actually secure! All six algorithms are competition winners or standards. The implementation uses authenticated encryption, proper key derivation, and constant-time operations. We just acknowledge that it started from a slightly absurd place.
+
+**Can I use this with CI/CD?**  
+I'm... very disappointed in you. I thought you were as paranoid as me.
+
+If you're okay storing your master key with GitHub and trusting Microsoft with your secrets, then GitFoil probably isn't for you. You should use [git-crypt](https://github.com/AGWA/git-crypt) instead—it's excellent and better suited for CI/CD workflows.
+
+GitFoil is for people with trust issues.
+
+**Why Elixir?**  
+Because it's good at concurrent processing. The crypto happens in Rust NIFs anyway. And honestly after adding six layers, the language choice seemed less neurotic by comparison.
+
+**Why Rust NIFs?**  
+Fast, memory-safe, side-channel resistant, and compiles to native code. Perfect for crypto.
+
+**What's with the ChaCha20 layer?**  
+ChaCha20-Poly1305 is an IETF standard designed by Daniel Bernstein. It's a stream cipher that's incredibly fast and secure. The name sounds like a dance, but it's actually excellent cryptography. Your secrets are now protected by an algorithm that goes cha-cha-cha. And yes, that's hilarious.
+
+**Can teams use this?**  
+Yes! One person generates the master key, then shares the `master.key` file securely (GPG-encrypted, password manager, etc.) with team members. Everyone copies it to their local `.git/git_foil/` directory. See the Team Usage section above.
+
+**Can I revoke access for a team member who left?**  
+Yes, but it requires re-keying the entire repository. Run `git-foil rekey --force` to generate a new master key and re-encrypt all files. Then share the new `master.key` file with remaining team members (but not the person who left).
+
+The old key is automatically backed up to `.git/git_foil/master.key.backup.<timestamp>` in case you need it.
+
+**Steps:**
+1. Run `git-foil rekey --force` (generates new keys)
+2. Commit and push the re-encrypted files
+3. Share the new `.git/git_foil/master.key` securely with remaining team members
+4. Team members place the new key in their `.git/git_foil/` directory
+5. The departed team member's old key is now useless
+
+The shared key model means this is an all-or-nothing operation. If you need frequent revocations, consider whether GitFoil's shared key model fits your use case, or look into alternatives like git-secret with per-user GPG keys.
+
+**Should I actually use this?**  
+- If you have secrets in your repo: **absolutely**
+- If it's a public open-source project: **how would people fork it? You haven't thought this through, have you?**
+- If you just like the idea of six layers: **go for it, it's fun**
 
 ---
 
 ## Comparisons
 
-### GitFoil vs git-crypt
+### vs. git-crypt
 
 | Feature | GitFoil | git-crypt |
 |---------|---------|-----------|
-| Encryption layers | **6 layers** | 1 layer |
-| Quantum resistance | **704-bit** | 128-bit |
-| Algorithm diversity | **6 algorithms** | 1 algorithm (AES-256) |
-| Competition-vetted | ✅ All 6 | ✅ AES |
-| Post-quantum algorithms | ✅ 2 (Ascon, Schwaemm) | ❌ None |
-| Parallel encryption | ✅ Multi-core | ❌ Single-threaded |
-| Progress bars | ✅ Yes | ❌ No |
-| Architecture | ✅ Hexagonal | Monolithic |
+| Layers | 6 | 1 |
+| Origin story | Neurosis about 128-bit keys | Rational design |
+| Quantum resistance | 704-bit | 128-bit |
+| Absurdity | High | Low |
+| Actually works | ✅ | ✅ |
 
-### GitFoil vs git-secret
+### vs. git-secret
 
 | Feature | GitFoil | git-secret |
 |---------|---------|-----------|
-| Workflow | **Automatic** | Manual (must run commands) |
-| Encryption | **Transparent** | Manual hide/reveal |
-| Team sharing | **Shared password** | GPG keys (complex) |
-| Quantum resistance | **704-bit** | Depends on GPG keys |
-| Algorithm diversity | **6 algorithms** | 1 algorithm (GPG) |
+| Layers | 6 (was gonna be 2) | 1 |
+| Workflow | Automatic | Manual commands |
+| Team setup | Shared key file | GPG keys per user |
+| Access revocation | Hard (rekey everything) | Easy (remove GPG key) |
+| Complexity | Low (High paranoia) | High |
 
-### GitFoil vs transcrypt
+### vs. transcrypt
 
 | Feature | GitFoil | transcrypt |
 |---------|---------|-----------|
-| Encryption layers | **6 layers** | 1 layer |
-| Quantum resistance | **704-bit** | 128-bit |
-| Algorithm diversity | **6 algorithms** | 1 algorithm (AES-256) |
-| Parallel processing | ✅ Multi-core | ❌ Single-threaded |
-| Native performance | ✅ Rust NIFs | Shell + OpenSSL |
-| Architecture | ✅ Hexagonal | Bash scripts |
+| Layers | 6 | 1 |
+| Implementation | Elixir + Rust | Bash scripts |
+| Quantum prep | ✅ Ready | ❌ Not ready |
+| Makes you question things | ✅ | ❌ |
 
 ---
 
-## Security Audit Recommendations
+## Security Notes
 
-GitFoil is **production-ready** but has not undergone a formal security audit. Before using in high-stakes environments, consider:
+GitFoil is production-ready but hasn't undergone a formal security audit.
 
-1. **Code review** by a cryptography expert
-2. **Penetration testing** of key storage mechanisms
-3. **Side-channel analysis** of Rust NIF implementations
-4. **Fuzzing** of wire format parsers
-5. **Third-party audit** of cryptographic implementation
+Before using in high-stakes environments:
+- Get a code review from a cryptographer
+- Consider penetration testing
+- Run fuzzing on the parsers
+- Evaluate whether the shared key model fits your threat model
+- Maybe ask yourself if you really need six layers (we did, and the answer was unclear, but here we are)
+
+Or just use it anyway. We're not your boss.
+
+**Disclaimer:** The author is not a cryptography expert. GitFoil uses well-established libraries and competition-winning algorithms, but do your own research if the stakes are high.
+
+### Known Limitations
+
+- Master key stored unencrypted on disk (like SSH keys - use full disk encryption)
+- Shared key model (can't revoke individual users without rekeying)
+- No key rotation without re-encrypting entire repo
+- No per-user audit trail
+
+These are design choices, not bugs. GitFoil prioritizes simplicity and automatic operation over fine-grained access control.
+
+---
+
+## Architecture (For People Who Care About This)
+
+GitFoil uses hexagonal architecture (ports & adapters):
+
+- **Core:** Pure business logic
+- **Ports:** Abstract interfaces
+- **Adapters:** Concrete implementations
+
+This makes it testable, maintainable, and extensible.
+
+It also makes us sound professional despite the origin story.
+
+If we ever decide we need a seventh layer, the architecture will support it.
+
+(We won't need a seventh layer.)
+
+(Probably.)
+
+---
+
+## Stats
+
+- ~6,800 lines of Elixir
+- 5 Rust NIFs for crypto
+- 18 integration tests
+- 85+ seconds of real Git operations in tests
+- Zero runtime dependencies
+- 4 layers that exist because of questionable decision-making
+- 100% concentrated over-engineering
 
 ---
 
 ## License
 
-MIT License
+BSD 3-Clause License
 
-Copyright (c) 2025 GitFoil Contributors
+Copyright (c) 2025, GitFoil Contributors
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+   contributors may be used to endorse or promote products derived from
+   this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+---
+
+Translation: Use it. Break it. Fork it. Add more layers if you want (but why?! What is wrong with you?!) Just don't blame us if things go wrong, and don't claim we endorsed your seven-layer fork.
 
 ---
 
 ## Credits
 
-Built on:
-- **Elixir/Erlang** - Concurrent, fault-tolerant platform
-- **Rust** - Memory-safe systems programming
-- **Rustler** - Safe Erlang NIFs in Rust
-- **NIST/CAESAR** - Competition-vetted cryptographic primitives
-- **Argon2id** - Password hashing (via Erlang :crypto)
-- **HKDF-SHA3-512** - Key derivation
-- **OpenSSL** - AES-256-GCM implementation
+Built on the shoulders of giants (who used more reasonable numbers of layers):
+
+- **Elixir/Erlang** - Because concurrency is nice
+- **Rust** - Because memory safety is nice
+- **NIST/CAESAR competitions** - Because vetted crypto is nice
+- **Kyber1024** - Post-quantum key encapsulation
+- **Coffee** - Because building this was ridiculous
 
 ### Algorithm Credits
 
-- **AES-256-GCM:** NIST FIPS 197 (2001)
-- **AEGIS-256:** Hongjun Wu & Bart Preneel, CAESAR winner (2016)
-- **Schwaemm256-256:** NIST LWC finalist, Sparkle team (2019)
-- **Deoxys-II-256:** CAESAR winner, Tweakable block cipher (2016)
-- **Ascon-128a:** NIST LWC winner, Christoph Dobraunig et al. (2019)
-- **ChaCha20-Poly1305:** Daniel J. Bernstein, IETF RFC 8439 (2008)
+- AES-256-GCM: NIST FIPS 197 (2001)
+- AEGIS-256: Wu & Preneel, CAESAR winner
+- Schwaemm256-256: NIST LWC finalist (2019)
+- Deoxys-II-256: CAESAR winner
+- Ascon-128a: NIST LWC winner (2023)
+- ChaCha20-Poly1305: Bernstein, IETF RFC 8439
 
-Inspired by the principle that **great security should be invisible.**
+All algorithms won actual competitions. We didn't just pick random papers. We just picked more of them than necessary.
 
 ---
 
-## **Set it up. Then forget it exists.**
+## Philosophical Note
+
+Is six layers of encryption excessive? Yes.
+
+Is it unnecessary for 99.9% of use cases? Probably.
+
+Did it start as two and escalate? Absolutely.
+
+But here's the thing: **great security should be invisible**. You set it up once, and then you forget it exists. Your files are encrypted in Git. Your team can collaborate normally. GitHub sees only ciphertext. Your working directory stays readable.
+
+And if quantum computers ever do break modern encryption, or if some NSA slide deck leaks showing AES was compromised in 2019, or if your intern accidentally pushes the repo to a public GitLab...
+
+You'll sleep soundly.
+
+Because you have six layers of cascading cryptographic fury protecting your `database.env` file.
+
+Is that rational? Debatable.
+
+Is it effective? Absolutely.
+
+Does it work? **Yes.**
+
+And honestly? That's what matters.
+
+---
+
+## Set it up once. Then forget it exists.
+*Six layers. Zero extra steps. Maximum paranoia.*
+*Your files stay readable. Your repo stays encrypted. You can finally sleep at night.*
