@@ -4,6 +4,8 @@
 
 Quantum-resistant security that piggybacks on Git. You'll never think about it again.
 
+ ![GitFoil Logo](docs/images/logo.png)
+
 ---
 
 ## The Problem
@@ -24,7 +26,7 @@ What if we just... kept encrypting?
 
 Like, what if we encrypted it. Then encrypted *that*. Then did it four more times.
 
-With six completely different algorithms. Six separate keys. So that breaking one gives you... the next layer of indecipherable noise.
+With six completely different algorithms. Six derived keys. So that breaking one gives you... the next layer of indecipherable noise.
 
 Would that be overkill?
 

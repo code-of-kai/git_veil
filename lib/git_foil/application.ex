@@ -5,9 +5,9 @@ defmodule GitFoil.Application do
 
   @impl true
   def start(_type, _args) do
-    children = []
-
-    opts = [strategy: :one_for_one, name: GitFoil.Supervisor]
-    Supervisor.start_link(children, opts)
+    # Git-foil is a CLI tool, not a long-running server
+    # Execute the CLI command and exit immediately
+    GitFoil.CLI.main(System.argv())
+    System.halt(0)
   end
 end
