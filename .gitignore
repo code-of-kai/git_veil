@@ -30,3 +30,9 @@ tmp/
 temp/
 git-veil
 burrito_out/
+
+# Escript build artifacts
+/git-foil
+
+# Test files
+test_secret.env
