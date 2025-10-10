@@ -54,7 +54,9 @@ git commit -m "feature: auth system that definitely won't leak"
 git push
 ```
 
-That's it. No extra commands. No ceremony. No remembering to encrypt things.
+Notice what's missing? **No `git-foil` commands.** Just Git.
+
+GitFoil piggybacks on your normal workflow. No extra commands. No ceremony. No remembering to encrypt things.
 
 Your files go in encrypted. They come out decrypted. Everything in between is beautiful, glorious ciphertext that would make a cryptographer weep.
 
