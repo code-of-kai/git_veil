@@ -1,28 +1,20 @@
 # GitFoil
 
-**Six layers of encryption because one was 128-bit and felt inadequate.**
+**Six layers of encryption because therapy is expensive.**
 
 Quantum-resistant security that piggybacks on Git. You'll never think about it again.
 
 ---
 
 ## The Problem
-
-Look, we need to talk about your threat model.
-
-You're worried AES-256 might have a backdoor. You read that Hacker News thread about quantum computers. You saw that thing about the NSA hoarding zero-days. You don't trust Microsoft with your code. You *definitely* don't trust that intern who keeps committing API keys.
-
+Look, we both know you're paranoid.
+You're convinced AES-256 has a backdoor, aren't you? You read that Hacker News thread about quantum computers. You saw that leaked slide deck about agencies hoarding zero-days. You don't trust Microsoft with your code. You definitely don't trust that intern who keeps committing API keys.
 Are you being paranoid?
-
-**Yes. Absolutely.**
-
+Yes. Absolutely.
 Is it justified?
-
-**Probably not.**
-
+Probably not.
 Are you going to do it anyway?
-
-**Obviously.**
+Obviously. Wait. What are you going to do?
 
 ---
 
@@ -100,19 +92,13 @@ Each layer uses authenticated encryption. Each layer gets its own key derived fr
 
 ### 1. Honestly? Neurosis.
 
-Started with two layers. One of them was Ascon-128a for quantum resistance. Great algorithm. NIST winner. Future-proof.
+Started with two layers. One was AES-256-GCM—solid, battle-tested, dependable. The other was Ascon-128a for quantum resistance. Both NIST winners. Future-proof.
 
-But it's 128-bit.
+But.
 
-And that *bothered* me.
+But Ascon's only 128-bit. And I couldn't shake the feeling that 128 bits wasn't enough—especially for the quantum-resistant layer. So I added another 256-bit layer. And then, in what I can only describe as a series of poor decisions, I kept going.
 
-I mean, AES-256 exists. We have 256-bit algorithms. Why was I okay with 128 bits in my quantum-resistant layer? What if that's the weak link? What if I'm leaving 128 bits of vulnerability?
 
-So I added another 256-bit layer.
-
-Then I thought, well, if I'm adding one more, why not add two more?
-
-And then, you know, might as well make it six.
 
 ### 2. Algorithms Fail (This Part Is Actually Rational)
 
@@ -137,7 +123,7 @@ If each has a 1% chance of catastrophic failure:
 
 That's one trillion times better odds.
 
-Is this mathematically sound? *Probably!*
+Is this mathematically sound? ¯\\\_(ツ)_/¯
 
 Are we overthinking this? *Definitely!*
 
