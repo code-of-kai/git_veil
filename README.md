@@ -119,15 +119,15 @@ But Ascon's only 128-bit. And I couldn't shake the feeling that 128 bits wasn't 
 - More operations than atoms in the universe.
 - Heat death of the sun comes first.
 - Not happening. Even with quantum computers.
-  - Grover's algorithm (the best quantum attack) cuts it to 2^352 operations.
-  - That's still 10^106 operations.
-  - For context: 2^128 is considered quantum-safe. This is 2^224 times harder than that.
+  - Even with Grover's algorithm (the best quantum attack), you'd need 2^704 operations to break this.
+  - That's approximately 10^212 operations.
+  - For context: 2^128 is considered quantum-safe. This is 2^576 times harder.
   - The universe will end. Your encryption won't break.
 
 **Algorithmic attack:** Find a mathematical weakness in the cipher itself.
 - Much more realistic threat.
 - This is how DES, MD5, and SHA-1 actually died.
-- Nobody brute-forced them—they found shortcuts.
+- Nobody brute-forced them. Instead, they found shortcuts.
 
 **GitFoil's approach:** If one algorithm breaks, you still have five others with completely different mathematical foundations. An attacker gets zero feedback about whether they succeeded. They just see more noise.
 
