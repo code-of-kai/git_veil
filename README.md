@@ -4,7 +4,7 @@
 
 Quantum-resistant security that piggybacks on Git. You'll never think about it again.
 
- ![GitFoil Logo](docs/images/GitFoil.png)
+ ![GitFoil Logo](docs/images/GitFoil.jpg)
 
 ---
 
