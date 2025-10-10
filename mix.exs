@@ -45,12 +45,20 @@ defmodule GitFoil.MixProject do
         plt_add_apps: [:mix],
         plt_file: {:no_warn, "priv/plts/dialyzer.plt"}
       ],
-      # Mix Release configuration
+      # Mix Release configuration with Burrito
       releases: [
         git_foil: [
-          include_erts: false,
-          include_executables_for: [:unix],
-          steps: [:assemble, &create_cli_wrapper/1]
+          steps: [:assemble, &Burrito.wrap/1],
+          include_executables_for: [],
+          applications: [runtime_tools: :none],
+          burrito: [
+            targets: [
+              macos_arm64: [os: :darwin, cpu: :aarch64],
+              macos_x86_64: [os: :darwin, cpu: :x86_64],
+              linux_x86_64: [os: :linux, cpu: :x86_64],
+              linux_arm64: [os: :linux, cpu: :aarch64]
+            ]
+          ]
         ]
       ]
     ]
@@ -67,35 +75,6 @@ defmodule GitFoil.MixProject do
     ]
   end
 
-  # Custom release step to create CLI wrapper
-  defp create_cli_wrapper(release) do
-    bin_path = Path.join([release.path, "bin", "git-foil"])
-
-    wrapper_script = """
-    #!/bin/sh
-    set -e
-
-    SELF=$(readlink "$0" || true)
-    if [ -z "$SELF" ]; then SELF="$0"; fi
-    RELEASE_ROOT="$(cd "$(dirname "$SELF")/.." && pwd -P)"
-    export RELEASE_ROOT
-
-    # Build arguments list for Elixir
-    ARGS=""
-    for arg in "$@"; do
-      ARGS="$ARGS,\\\"$arg\\\""
-    done
-    ARGS=$(echo "$ARGS" | sed 's/^,//')
-
-    exec "$RELEASE_ROOT/bin/git_foil" eval "GitFoil.CLI.main([$ARGS])"
-    """
-
-    File.write!(bin_path, wrapper_script)
-    File.chmod!(bin_path, 0o755)
-
-    release
-  end
-
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
@@ -104,6 +83,9 @@ defmodule GitFoil.MixProject do
 
       # Rust NIF for Ascon-128a
       {:rustler, "~> 0.34.0"},
+
+      # Burrito - standalone executable builder
+      {:burrito, "~> 1.0"},
 
       # Alternative crypto implementation (libsodium)
       # DISABLED: enacl not compatible with OTP 28 yet
