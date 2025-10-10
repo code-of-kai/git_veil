@@ -740,16 +740,15 @@ The shared key model means this is an all-or-nothing operation. If you need freq
 
 ---
 
-## Comparisons
-
-### vs. git-crypt
+## Comparison vs. Git-Crypt
 
 | Feature | GitFoil | git-crypt |
 |---------|---------|-----------|
 | Layers | 6 | 1 |
 | AES-256 | ✅ (plus 5 others) | ✅ |
+| Key size | 1,408-bit | 256-bit |
+| Quantum resistance | 704-bit | 128-bit |
 | Origin story | Neurosis about 128-bit keys | Rational design |
-| Quantum resistance | 704-bit | 256-bit |
 | Absurdity | High | Low |
 | Actually works | ✅ | ✅ |
 
@@ -757,18 +756,16 @@ The shared key model means this is an all-or-nothing operation. If you need freq
 
 ## Security Notes
 
-GitFoil is production-ready but hasn't undergone a formal security audit.
+GitFoil is production-ready but hasn't undergone a formal security audit. Do your own research if the stakes are high.
 
 Before using in high-stakes environments:
 - Get a code review from a cryptographer
 - Consider penetration testing
 - Run fuzzing on the parsers
 - Evaluate whether the shared key model fits your threat model
-- Maybe ask yourself if you really need six layers (we did, and the answer was unclear, but here we are)
+- Maybe ask yourself if you really need six layers (depends on your relationship with paranoia)
 
 Or just use it anyway. We're not your boss.
-
-**Disclaimer:** The author is not a cryptography expert. GitFoil uses well-established libraries and competition-winning algorithms, but do your own research if the stakes are high.
 
 ### Known Limitations
 
@@ -871,7 +868,7 @@ Built on the shoulders of giants (who used more reasonable numbers of layers):
 - Ascon-128a: NIST LWC winner (2023)
 - ChaCha20-Poly1305: Bernstein, IETF RFC 8439
 
-All algorithms won actual competitions. We didn't just pick random papers. We just picked more of them than necessary.
+All algorithms are competition winners or international standards. We didn't just pick random papers. We just picked more of them than necessary.
 
 ---
 
@@ -902,5 +899,5 @@ And honestly? That's what matters.
 ---
 
 ## Set it up once. Then forget it exists.
-*Six layers. Zero extra steps. Maximum paranoia.*
+*Six layers. Zero extra steps. Paranoia minimised.*
 *Your files stay readable. Your repo stays encrypted. You can finally sleep at night.*
