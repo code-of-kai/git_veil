@@ -22,7 +22,7 @@ defmodule GitFoil.Adapters.FileKeyStorage do
 
   alias GitFoil.Core.Types.{Keypair, EncryptionKey}
 
-  @key_dir ".git/git_foil"
+  @key_subdir "git_foil"
   @key_file "master.key"
 
   @impl true
@@ -131,11 +131,33 @@ defmodule GitFoil.Adapters.FileKeyStorage do
   # ============================================================================
 
   defp key_file_path do
-    Path.join(@key_dir, @key_file)
+    Path.join(key_directory(), @key_file)
+  end
+
+  defp key_directory do
+    case get_git_dir() do
+      {:ok, git_dir} -> Path.join(git_dir, @key_subdir)
+      {:error, _} -> ".git/#{@key_subdir}"  # Fallback to relative path
+    end
+  end
+
+  defp get_git_dir do
+    case System.cmd("git", ["rev-parse", "--git-dir"], stderr_to_stdout: true) do
+      {output, 0} ->
+        # Git returns the .git directory path (either ".git" or an absolute path)
+        git_dir = String.trim(output)
+        # Make it absolute if it's not already
+        absolute_git_dir = Path.expand(git_dir)
+        {:ok, absolute_git_dir}
+
+      {_error, _} ->
+        {:error, :not_in_git_repo}
+    end
   end
 
   defp ensure_key_directory_exists do
-    case File.mkdir_p(@key_dir) do
+    key_dir = key_directory()
+    case File.mkdir_p(key_dir) do
       :ok -> :ok
       {:error, reason} -> {:error, reason}
     end
